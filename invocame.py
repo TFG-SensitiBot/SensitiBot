@@ -6,4 +6,4 @@ parser = argparse.ArgumentParser()
 
 args = parser.parse_args()
 
-print("¡Gracias por invocarme!")
+print("Gracias por invocarme!")
