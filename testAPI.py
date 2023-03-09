@@ -15,13 +15,16 @@ args = parser.parse_args()
 
 url = 'https://api.github.com'
 
-headers = {
-    'Authorization': f'Bearer {TOKEN}'
-}
+headers = {}
+
+if TOKEN != None:
+    headers['Authorization'] = f'Bearer {TOKEN}'
 
 def getFilesFromRepositories(owner):
     response = requests.get(f'{url}/users/{owner}/repos', headers=headers)
     json_data_1 = response.json()
+
+    print(f'\n{len(json_data_1)} repositorios publicos encontrados\n')
 
     for repo in json_data_1:
         response = requests.get(f'{url}/repos/{owner}/{repo["name"]}/git/trees/{repo["default_branch"]}?recursive=1',headers=headers)
