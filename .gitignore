@@ -1,1 +1,5 @@
 .env
+SensitiBot.egg-info
+__pycache__
+build
+outputs
