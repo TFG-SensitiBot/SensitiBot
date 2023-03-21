@@ -19,6 +19,9 @@ authors = [{name="José Manuel Martín Luque", email="martinluquejm@gmail.com" }
 [project.scripts]
 sensitibot = "sensitibot.sensitibot:main"
 
+[tool.setuptools]
+packages = ["sensitibot"]
+
 [project.urls]
 "Homepage" = "https://github.com/TFG-SensitiBot/SensitiBot"
 "Bug Tracker" = "https://github.com/TFG-SensitiBot/SensitiBot/issues"
