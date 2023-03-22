@@ -13,12 +13,16 @@ def main():
     group.add_argument('-l', '--local', metavar="PATH", const='./', nargs='?', help='use a local repository (default: current directory)')
     group.add_argument('-g', '--github', metavar='USER', help='use a GitHub repository')
     parser.add_argument('-r', '--repository', metavar='REPO',  help='the repository to use (only if --github is used)')
+    parser.add_argument('-b', '--branch', metavar='BRANCH', help='the branch to use (only if --repository is used)')
 
     args = parser.parse_args()
 
     if args.github:
         if args.repository:
-            data = getFilesFromRepository(args.github, args.repository)
+            if args.branch:
+                data = getFilesFromRepository(args.github, args.repository, args.branch)
+            else:
+                data = getFilesFromRepository(args.github, args.repository)
 
             # Write data to file
             os.makedirs("outputs", exist_ok=True)
@@ -34,6 +38,6 @@ def main():
 
     elif args.local:
         if args.local == './' or args.local == None:
-            print("Using local repository: current directory")
+            print("Using local repositories han't been implemented yet")
         else:
-            print(f"Using local repository: {args.local}")
+            print(f"Using local repositories hasn't been implemented yet ({args.local})")
