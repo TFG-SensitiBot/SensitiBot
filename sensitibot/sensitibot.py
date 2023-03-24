@@ -1,9 +1,7 @@
 import argparse
-from sensitibot.github import *
-
-from dotenv import load_dotenv
-
-load_dotenv()
+import os
+from github import github
+from local import local
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,27 +15,16 @@ def main():
 
     args = parser.parse_args()
 
+    data = ""
+
     if args.github:
-        if args.repository:
-            if args.branch:
-                data = getFilesFromRepository(args.github, args.repository, args.branch)
-            else:
-                data = getFilesFromRepository(args.github, args.repository)
-
-            # Write data to file
-            os.makedirs("outputs", exist_ok=True)
-            with open('outputs/data.json', 'w') as f:
-                f.write(data)
-        else:
-            data = getFilesFromRepositories(args.github)
-
-            # Write data to file
-            os.makedirs("outputs", exist_ok=True)
-            with open('outputs/data.json', 'w') as f:
-                f.write(data)
+        data = github.processGitHub(args.github, args.repository, args.branch)
 
     elif args.local:
-        if args.local == './' or args.local == None:
-            print("Using local repositories han't been implemented yet")
-        else:
-            print(f"Using local repositories hasn't been implemented yet ({args.local})")
+        data = local.processLocal(args.local)
+    
+    # Write data to file
+    os.makedirs("outputs", exist_ok=True)
+    with open('outputs/data.json', 'w') as f:
+        f.write(data)
+        
