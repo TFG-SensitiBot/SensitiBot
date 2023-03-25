@@ -1,28 +1,29 @@
-# sensitibot.toml
-
-[build-system]
-requires = [
-    "setuptools>=64.0.0",
-    "wheel",
-    "requests==2.28.2",
-    "python-dotenv==1.0.0",
-    "pandas==1.5.3"
-    ]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "SensitiBot"
 version = "0.0.1"
 description = "My awesome Hello CLI application"
 readme = "README.md"
-authors = [{name="José Manuel Martín Luque", email="martinluquejm@gmail.com" }]
+authors = ["José Manuel Martín Luque <martinluquejm@gmail.com>"]
+packages = [
+    { include = "sensitibot" },
+    { include = "local" },
+    { include = "github" },
+    { include = "reader" },
+]
 
-[project.scripts]
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "==2.28.2"
+python-dotenv = "==1.0.0"
+pandas = "==1.5.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
 sensitibot = "sensitibot.sensitibot:main"
 
-[tool.setuptools]
-packages = ["sensitibot", "local", "github", "reader"]
-
-[project.urls]
-"Homepage" = "https://github.com/TFG-SensitiBot/SensitiBot"
-"Bug Tracker" = "https://github.com/TFG-SensitiBot/SensitiBot/issues"
+[tool.poetry.urls]
+homepage = "https://github.com/TFG-SensitiBot/SensitiBot"
+repository = "https://github.com/TFG-SensitiBot/SensitiBot"
