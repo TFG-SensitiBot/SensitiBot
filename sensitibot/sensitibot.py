@@ -1,5 +1,8 @@
 import argparse
+import json
 import os
+import subprocess
+import tempfile
 from github import github
 from local import local
 
@@ -15,16 +18,26 @@ def main():
 
     args = parser.parse_args()
 
-    data = ""
+    result = ""
 
     if args.github:
-        data = github.processGitHub(args.github, args.repository, args.branch)
+        result = github.processGitHub(args.github, args.repository, args.branch)
 
     elif args.local:
-        data = local.processLocal(args.local)
+        result = local.processLocal(args.local)
+
     
-    # Write data to file
-    os.makedirs("outputs", exist_ok=True)
-    with open('outputs/data.json', 'w') as f:
+    data = json.dumps(result, indent=4, sort_keys=True)
+    
+    # Write result to temp file and open it
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
         f.write(data)
-        
+        f.close()
+
+    if os.name == 'nt':  # For Windows
+        subprocess.Popen(["notepad.exe", f.name])
+    elif os.name == 'posix':  # For Linux and macOS
+        opener = 'open' if sys.platform == 'darwin' else 'xdg-open'
+        subprocess.call([opener, f.name])
+    else:
+        raise OSError('Unsupported operating system')

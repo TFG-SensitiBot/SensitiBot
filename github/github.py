@@ -1,24 +1,26 @@
 import sys
 import requests
 import os
-import json
+
+import urllib
 from reader import reader
 
 api_url = 'https://api.github.com'
 raw_url = 'https://raw.githubusercontent.com'
 headers = {}
 
+
 def processGitHub(owner, repository=None, branch=None):
-    files = ""
+    files = {}
     if repository == None:
         files = getFilesFromRepositories(owner)
     else:
-        files = getFilesFromRepository(owner, repository, branch)
+        files = {"repositories": [
+            getFilesFromRepository(owner, repository, branch)]}
 
     result = reader.processFiles(files)
 
     return result
-
 
 
 def getRateLimit():
@@ -30,7 +32,6 @@ def getRateLimit():
     response = requests.get(f'{api_url}/rate_limit', headers=headers)
     json_data = response.json()
     return json_data
-
 
 
 def getFilesFromRepositories(owner):
@@ -47,14 +48,19 @@ def getFilesFromRepositories(owner):
         sys.exit(1)  # exit with non-zero exit code
 
     json_repos = response.json()
-    
-    repositories = {}
-    for repo in json_repos:
-        files_repo = json.loads(getFilesFromRepository(owner, repo["name"], repo["default_branch"]))
-        repositories[repo["name"]] = files_repo[repo["name"]]
 
-    return json.dumps(repositories, indent=4)
+    result = {"repositories": []}
 
+    for repository in json_repos:
+        result_repository = getFilesFromRepository(
+            owner, repository["name"], repository["default_branch"])
+        
+        if result_repository == None:
+            continue
+
+        result["repositories"].append(result_repository)
+
+    return result
 
 
 def getFilesFromRepository(owner, repository, branch=None):
@@ -65,7 +71,8 @@ def getFilesFromRepository(owner, repository, branch=None):
 
     # In case the branch is not specified, we need to get the default branch
     if branch == None:
-        response = requests.get(f'{api_url}/repos/{owner}/{repository}', headers=headers)
+        response = requests.get(
+            f'{api_url}/repos/{owner}/{repository}', headers=headers)
         if not response.ok:
             error = response.json()
             error_message = error.get('message')
@@ -75,26 +82,31 @@ def getFilesFromRepository(owner, repository, branch=None):
         json_repo = response.json()
         branch = json_repo["default_branch"]
 
-    response = requests.get(f'{api_url}/repos/{owner}/{repository}/git/trees/{branch}?recursive=1', headers=headers)
+    response = requests.get(
+        f'{api_url}/repos/{owner}/{repository}/git/trees/{branch}?recursive=1', headers=headers)
     if not response.ok:
         error = response.json()
         error_message = error.get('message')
+        if error_message == "Git Repository is empty.":
+            return None
+
         print(f'Error: Repository {error_message}')
         sys.exit(1)  # exit with non-zero exit code
-    
+
     json_files = response.json()
 
-    repositories = {}
+    result_repository = {"name": repository, "types": []}
 
     # Types of files to be considered
     csv_files = []
 
     for file in json_files["tree"]:
-        if(file["type"] == "blob"):
+        if (file["type"] == "blob"):
 
-            if file["path"].endswith("data.csv"):
-                csv_files.append(f'{raw_url}/{owner}/{repository}/master/{file["path"]}')
-    
-    repositories[repository] = {"csv_files": csv_files}
+            if file["path"].endswith(".csv"):
+                csv_files.append(
+                    urllib.parse.quote(f'{raw_url}/{owner}/{repository}/master/{file["path"]}', safe=':/.'))
 
-    return json.dumps(repositories, indent=4)
+    result_repository["types"] = {"type": "csv_files", "files": csv_files}
+
+    return result_repository
