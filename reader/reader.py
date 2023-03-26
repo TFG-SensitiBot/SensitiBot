@@ -1,5 +1,7 @@
-import pandas as pd
 import re
+
+import pandas as pd
+from tqdm import tqdm
 
 
 def processFiles(files):
@@ -14,7 +16,6 @@ def processFiles(files):
             csv_result = readcsvFiles(csv_files)
             result_repository["types"].append(csv_result)
 
-        
         result["repositories"].append(result_repository)
 
     return result
@@ -22,7 +23,7 @@ def processFiles(files):
 
 def readcsvFiles(files):
     result = {"type": "csv_files", "files": []}
-    for file in files:
+    for file in tqdm(files, desc="Reading csv files", ncols=100, unit=" file"):
         data = pd.read_csv(file, comment='#')
 
         columns = data.columns.values
@@ -40,7 +41,6 @@ def analizeHeaders(name, headers):
 
     regex = r'^(?:' + '|'.join(terms) + r')(?: ' + '| '.join(suffixes) + r')?$'
     pattern = re.compile(regex)
-
 
     result = {}
     correct = []

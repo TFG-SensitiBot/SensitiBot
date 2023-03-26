@@ -1,8 +1,10 @@
-import sys
-import requests
 import os
-
+import sys
 import urllib
+
+import requests
+from tqdm import tqdm
+
 from reader import reader
 
 api_url = 'https://api.github.com'
@@ -31,7 +33,7 @@ def getRateLimit():
 
     response = requests.get(f'{api_url}/rate_limit', headers=headers)
     json_data = response.json()
-    return json_data
+    return json_data["rate"]["remaining"]
 
 
 def getFilesFromRepositories(owner):
@@ -39,22 +41,33 @@ def getFilesFromRepositories(owner):
 
     if TOKEN != None:
         headers['Authorization'] = f'Bearer {TOKEN}'
+    
+    page = 1
+    count = 30
+    json_repos = {}
+    while count == 30:
+        response = requests.get(f'{api_url}/users/{owner}/repos?page={page}&per_page=30', headers=headers)
+        if not response.ok:
+            error = response.json()
+            error_message = error.get('message')
+            print(f'Error: Github User or Organization {error_message}')
+            sys.exit(1)  # exit with non-zero exit code
+        
+        if page == 1:
+            json_repos = response.json()
+        else:
+            json_repos.extend(response.json())
+        page += 1
+        count = len(response.json())
 
-    response = requests.get(f'{api_url}/users/{owner}/repos', headers=headers)
-    if not response.ok:
-        error = response.json()
-        error_message = error.get('message')
-        print(f'Error: Github User or Organization {error_message}')
-        sys.exit(1)  # exit with non-zero exit code
-
-    json_repos = response.json()
+    print(f'{len(json_repos)} public repositories found')
 
     result = {"repositories": []}
 
-    for repository in json_repos:
+    for repository in tqdm(json_repos, desc="Reading repositories", ncols=100, unit=" repo"):
         result_repository = getFilesFromRepository(
             owner, repository["name"], repository["default_branch"])
-        
+
         if result_repository == None:
             continue
 
