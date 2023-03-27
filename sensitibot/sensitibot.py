@@ -21,6 +21,8 @@ def main():
                         help='the repository to use (only if --github is used)')
     parser.add_argument('-b', '--branch', metavar='BRANCH',
                         help='the branch to use (only if --repository is used)')
+    parser.add_argument('-t', '--token', metavar='TOKEN',
+                        help='the token to use (only if --github is used)')
 
     args = parser.parse_args()
 
@@ -28,7 +30,7 @@ def main():
 
     if args.github:
         result = github.processGitHub(
-            args.github, args.repository, args.branch)
+            args.github, args.repository, args.branch, args.token)
 
     elif args.local:
         result = local.processLocal(args.local)

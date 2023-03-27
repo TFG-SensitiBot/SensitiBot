@@ -12,47 +12,64 @@ raw_url = 'https://raw.githubusercontent.com'
 headers = {}
 
 
-def processGitHub(owner, repository=None, branch=None):
+def processGitHub(owner, repository=None, branch=None, token=None):
+    TOKEN = os.getenv("GITHUB_TOKE", default=None)
+    if token != None:
+        TOKEN = token
+
+    if TOKEN != None:
+        headers['Authorization'] = f'Bearer {TOKEN}'
+
     files = {}
+    result = {}
     if repository == None:
         files = getFilesFromRepositories(owner)
     else:
-        files = {"repositories": [
-            getFilesFromRepository(owner, repository, branch)]}
+        files = getFilesFromRepository(owner, repository, branch)
+        if files != None:
+            files = {"repositories": [files]}
 
-    result = reader.processFiles(files)
+    if files != None:
+        result = reader.processFiles(files)
 
     return result
 
 
 def getRateLimit():
-    TOKEN = os.getenv("GITHUB_TOKEN", default=None)
-
-    if TOKEN != None:
-        headers['Authorization'] = f'Bearer {TOKEN}'
-
     response = requests.get(f'{api_url}/rate_limit', headers=headers)
     json_data = response.json()
     return json_data["rate"]["remaining"]
 
 
 def getFilesFromRepositories(owner):
-    TOKEN = os.getenv("GITHUB_TOKEN", default=None)
+    print(f'Searching repositories for {owner}:')
 
-    if TOKEN != None:
-        headers['Authorization'] = f'Bearer {TOKEN}'
-    
-    page = 1
-    count = 30
     json_repos = {}
-    while count == 30:
-        response = requests.get(f'{api_url}/users/{owner}/repos?page={page}&per_page=30', headers=headers)
+    per_page = 100
+    count = per_page
+    page = 1
+    while count == per_page:
+        response = requests.get(
+            f'{api_url}/users/{owner}/repos?page={page}&per_page={per_page}', headers=headers)
         if not response.ok:
             error = response.json()
             error_message = error.get('message')
-            print(f'Error: Github User or Organization {error_message}')
-            sys.exit(1)  # exit with non-zero exit code
-        
+            if error_message == "Not Found":
+                print(f'Error: Github User or Organization {error_message}')
+                sys.exit(1)  # exit with non-zero exit code
+            elif error_message == "Bad credentials":
+                print("Error: Bad credentials")
+                sys.exit(1)  # exit with non-zero exit code
+            elif "API rate limit exceeded" in error_message:
+                if page == 1:   # If the first request has already exceeded the rate limit, we can't continue
+                    print(
+                        "API rate limit exceeded, could not analyze GitHub user or organization.")
+                    return None
+                else:           # If the rate limit has been exceeded after the first request, we can continue with the repositories already found
+                    print(
+                        "API rate limit exceeded, not all repositories will be analyzed.")
+                    break
+
         if page == 1:
             json_repos = response.json()
         else:
@@ -60,11 +77,20 @@ def getFilesFromRepositories(owner):
         page += 1
         count = len(response.json())
 
-    print(f'{len(json_repos)} public repositories found')
+    print(f'{len(json_repos)} public repositories found\n')
 
     result = {"repositories": []}
 
-    for repository in tqdm(json_repos, desc="Reading repositories", ncols=100, unit=" repo"):
+    number_of_repos = len(json_repos)
+    remaining = getRateLimit()
+    if remaining <= number_of_repos:
+        number_of_repos = remaining
+        print(
+            f'Warning: Only {number_of_repos} repositories will be analyzed, because the GitHub API rate limit has been exceeded.')
+
+    for i in tqdm(range(0, number_of_repos), desc="Reading repositories", ncols=100, unit=" repo"):
+        # for repository in tqdm(json_repos, desc="Reading repositories", ncols=100, unit=" repo"):
+        repository = json_repos[i]
         result_repository = getFilesFromRepository(
             owner, repository["name"], repository["default_branch"])
 
@@ -77,11 +103,6 @@ def getFilesFromRepositories(owner):
 
 
 def getFilesFromRepository(owner, repository, branch=None):
-    TOKEN = os.getenv("GITHUB_TOKEN", default=None)
-
-    if TOKEN != None:
-        headers['Authorization'] = f'Bearer {TOKEN}'
-
     # In case the branch is not specified, we need to get the default branch
     if branch == None:
         response = requests.get(
@@ -89,8 +110,16 @@ def getFilesFromRepository(owner, repository, branch=None):
         if not response.ok:
             error = response.json()
             error_message = error.get('message')
-            print(f'Error: Repository {error_message}')
-            sys.exit(1)  # exit with non-zero exit code
+            if error_message == "Not Found":
+                print(f'Error: Repository {error_message}')
+                sys.exit(1)  # exit with non-zero exit code
+            elif error_message == "Bad credentials":
+                print("Error: Bad credentials")
+                sys.exit(1)  # exit with non-zero exit code
+            elif "API rate limit exceeded" in error_message:
+                print(
+                    "API rate limit exceeded, not all repositories have been analyzed.")
+                return None
 
         json_repo = response.json()
         branch = json_repo["default_branch"]
@@ -100,11 +129,17 @@ def getFilesFromRepository(owner, repository, branch=None):
     if not response.ok:
         error = response.json()
         error_message = error.get('message')
-        if error_message == "Git Repository is empty.":
+        if error_message == "Not Found":
+            print(f'Error: Repository {error_message}')
+            sys.exit(1)  # exit with non-zero exit code
+        elif error_message == "Bad credentials":
+            print("Error: Bad credentials")
+            sys.exit(1)  # exit with non-zero exit code
+        elif error_message == "Git Repository is empty.":
             return None
-
-        print(f'Error: Repository {error_message}')
-        sys.exit(1)  # exit with non-zero exit code
+        elif "API rate limit exceeded" in error_message:
+            print("API rate limit exceeded")
+            return None
 
     json_files = response.json()
 

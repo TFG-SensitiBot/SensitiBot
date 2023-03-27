@@ -9,6 +9,7 @@ def processFiles(files):
     result = {"repositories": []}
 
     for repository in repositories:
+        print(f"\nAnalyzing repository {repository['name']}:")
         result_repository = {"name": repository["name"], "types": []}
 
         if repository["types"]["type"] == "csv_files":
@@ -23,7 +24,7 @@ def processFiles(files):
 
 def readcsvFiles(files):
     result = {"type": "csv_files", "files": []}
-    for file in tqdm(files, desc="Reading csv files", ncols=100, unit=" file"):
+    for file in tqdm(files, desc="Analyzing csv files", ncols=100, unit=" file"):
         data = pd.read_csv(file, comment='#')
 
         columns = data.columns.values
