@@ -13,7 +13,7 @@ headers = {}
 
 
 def processGitHub(owner, repository=None, branch=None, token=None):
-    TOKEN = os.getenv("GITHUB_TOKE", default=None)
+    TOKEN = os.getenv("GITHUB_TOKEN", default=None)
     if token != None:
         TOKEN = token
 
@@ -25,12 +25,15 @@ def processGitHub(owner, repository=None, branch=None, token=None):
     if repository == None:
         files = getFilesFromRepositories(owner)
     else:
+        print(f'Searching repositoriy {owner}/{repository}:')
         files = getFilesFromRepository(owner, repository, branch)
         if files != None:
             files = {"repositories": [files]}
 
-    if files != None:
-        result = reader.processFiles(files)
+    if files == None:
+        sys.exit(1)  # exit with non-zero exit code
+        
+    result = reader.processFiles(files)
 
     return result
 
