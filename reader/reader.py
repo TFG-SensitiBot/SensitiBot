@@ -1,3 +1,4 @@
+import itertools
 import re
 
 import pandas as pd
@@ -36,19 +37,22 @@ def readcsvFiles(files):
 
 
 def analizeHeaders(name, headers):
-    terms = ["email", "phone", "iban", "account", "sha", "gpg", "socialSecurity", "creditCard", "debitCard", "name", "surname", "lastname", "firstname", "dni",
-             "license", "lecensePlate", "IP", "address", "gps", "coordinates", "location", "password", "secret", "key", "hash"]
+    terms = ["email", "phone", "iban", "account", "sha", "gpg", "socialsecurity", "creditcard", "debitcard", "name", "surname", "lastname", "firstname", "dni",
+             "licenses", "lecenseplates", "ip", "address", "gps", "coordinates", "location", "passwords", "secret", "key", "hash"]
     suffixes = ["number", "value", "key"]
 
-    regex = r'^(?:' + '|'.join(terms) + r')(?: ' + '| '.join(suffixes) + r')?$'
-    pattern = re.compile(regex)
+    combinations = []
+    for term, suffix in itertools.product(terms, suffixes):
+        combinations.append(term)
+        combinations.append(term + ' ' + suffix)
+        combinations.append(term + suffix)
 
     result = {}
     correct = []
     error = []
     for header in headers:
         header = header.strip().lower()
-        if pattern.match(header):
+        if any(header in s for s in combinations):
             error.append(header)
         else:
             correct.append(header)
