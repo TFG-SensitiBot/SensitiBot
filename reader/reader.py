@@ -44,9 +44,10 @@ def readcsvFiles(files):
 
         try:
             data = pd.read_csv(file, comment='#', sep=None, engine='python',
-                               encoding='utf-8', skip_blank_lines=True)
-        except:
-            errors.append(f"Error reading file {file}")
+                               encoding='latin-1', skip_blank_lines=True)
+        except Exception as e:
+            error = {"file": file, "error": str(e)}
+            errors.append(error)
             continue
 
         columns = data.columns.values
@@ -63,7 +64,7 @@ def readcsvFiles(files):
 
 def analizeHeaders(name, headers):
     terms = ["email", "phone", "mobile", "iban", "account", "sha", "gpg", "socialsecurity", "creditcard", "debitcard", "card", "name", "surname", "lastname", "firstname", "dni",
-             "license", "licenses", "lecenseplates", "ip", "ips", "address", "addresses", "gps", "coordinate", "coordinates", "location", "password", "passwords", "secret", "secrets", "key", "hash"]
+             "license", "licenses", "lecenseplates", "ip", "ips", "address", "addresses", "gps", "coordinate", "coordinates", "location", "password", "latitud", "latitude", "longitud", "longitude", "passwords", "secret", "secrets", "key", "hash"]
     suffixes = ["number", "value", "key"]
 
     combinations = []
