@@ -1,12 +1,9 @@
 import argparse
-import json
-import os
-import subprocess
 import sys
-import tempfile
 
 from github import github
 from local import local
+from renderer import renderer
 
 
 def main():
@@ -39,17 +36,8 @@ def main():
     if result == None:
         print("No results found")
         sys.exit(1)  # exit with non-zero exit code
-    data = json.dumps(result, indent=4, sort_keys=True)
 
-    # Write result to temp file and open it
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
-        f.write(data)
-        f.close()
+    renderer.show_result_as_text(result)
 
-    if os.name == 'nt':  # For Windows
-        subprocess.Popen(["notepad.exe", f.name])
-    elif os.name == 'posix':  # For Linux and macOS
-        opener = 'open' if sys.platform == 'darwin' else 'xdg-open'
-        subprocess.call([opener, f.name])
-    else:
-        raise OSError('Unsupported operating system')
+    # html = renderer.render_html_from_template(result)
+    # renderer.show_result_as_html(html)
