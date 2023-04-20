@@ -21,17 +21,19 @@ def main():
                         help='the branch to use (only if --repository is used)')
     parser.add_argument('-t', '--token', metavar='TOKEN',
                         help='the token to use (only if --github is used)')
+    parser.add_argument('--deep-search', action='store_true',
+                        help='Analyze content of files')
 
     args = parser.parse_args()
 
     result = ""
 
     if args.github:
-        result = github.processGitHub(
-            args.github, args.repository, args.branch, args.token)
+        result = github.process_github(
+            args.github, args.repository, args.branch, args.token, args.deep_search)
 
     elif args.local:
-        result = local.processLocal(args.local)
+        result = local.process_local(args.local, args.deep_search)
 
     if result == None:
         print("No results found")

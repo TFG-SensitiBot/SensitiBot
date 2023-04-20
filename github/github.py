@@ -13,7 +13,7 @@ headers = {}
 multipleRepositories = False
 
 
-def processGitHub(owner, repository=None, branch=None, token=None):
+def process_github(owner, repository=None, branch=None, token=None, deep_search=False):
     global multipleRepositories
     TOKEN = os.getenv("GITHUB_TOKEN", default=None)
     if token != None:
@@ -26,28 +26,28 @@ def processGitHub(owner, repository=None, branch=None, token=None):
     result = {}
     if repository == None:
         multipleRepositories = True
-        files = getFilesFromRepositories(owner)
+        files = get_files_from_repositories(owner)
     else:
         print(f'Searching repositoriy {owner}/{repository}:')
-        files = getFilesFromRepository(owner, repository, branch)
+        files = get_files_from_repository(owner, repository, branch)
         if files != None:
             files = {"repositories": [files]}
 
     if files == None:
-        sys.exit(1)  # exit with non-zero exit code
+        return None
 
-    result = reader.processFiles(files)
+    result = reader.process_files(files, deep_search)
 
     return result
 
 
-def getRateLimit():
+def get_rate_limit():
     response = requests.get(f'{api_url}/rate_limit', headers=headers)
     json_data = response.json()
     return json_data["rate"]["remaining"]
 
 
-def getFilesFromRepositories(owner):
+def get_files_from_repositories(owner):
     print(f'Searching repositories for {owner}:')
 
     json_repos = {}
@@ -88,7 +88,7 @@ def getFilesFromRepositories(owner):
     result = {"repositories": []}
 
     number_of_repos = len(json_repos)
-    remaining = getRateLimit()
+    remaining = get_rate_limit()
     if remaining <= number_of_repos:
         number_of_repos = remaining
         print(
@@ -99,7 +99,7 @@ def getFilesFromRepositories(owner):
     for i in pbar:
         repository = json_repos[i]
         pbar.set_description(repository["name"])
-        result_repository = getFilesFromRepository(
+        result_repository = get_files_from_repository(
             owner, repository["name"], repository["default_branch"])
 
         if result_repository == None:
@@ -110,10 +110,10 @@ def getFilesFromRepositories(owner):
     return result
 
 
-def getFilesFromRepository(owner, repository, branch=None):
+def get_files_from_repository(owner, repository, branch=None):
     # In case the branch is not specified, we need to get the default branch
     if branch == None:
-        branch = getDefaultBranchOfRepository(owner, repository)
+        branch = get_default_branch_of_repository(owner, repository)
 
     response = requests.get(
         f'{api_url}/repos/{owner}/{repository}/git/trees/{branch}?recursive=1', headers=headers)
@@ -149,12 +149,19 @@ def getFilesFromRepository(owner, repository, branch=None):
                 csv_files.append(
                     urllib.parse.quote(f'{raw_url}/{owner}/{repository}/master/{file["path"]}', safe=':/.'))
 
-    result_repository["types"] = {"type": "csv_files", "files": csv_files}
+    # Only add the types to the result if there are files of that type
+    if len(csv_files) > 0:
+        result_repository["types"].append(
+            {"type": "csv_files", "files": csv_files})
+
+    # Only return the result if there are files of any type
+    if len(result_repository["types"]) == 0:
+        return None
 
     return result_repository
 
 
-def getDefaultBranchOfRepository(owner, repository):
+def get_default_branch_of_repository(owner, repository):
     response = requests.get(
         f'{api_url}/repos/{owner}/{repository}', headers=headers)
     if not response.ok:
