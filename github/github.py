@@ -10,9 +10,11 @@ from reader import reader
 api_url = 'https://api.github.com'
 raw_url = 'https://raw.githubusercontent.com'
 headers = {}
+multipleRepositories = False
 
 
 def processGitHub(owner, repository=None, branch=None, token=None):
+    global multipleRepositories
     TOKEN = os.getenv("GITHUB_TOKEN", default=None)
     if token != None:
         TOKEN = token
@@ -23,6 +25,7 @@ def processGitHub(owner, repository=None, branch=None, token=None):
     files = {}
     result = {}
     if repository == None:
+        multipleRepositories = True
         files = getFilesFromRepositories(owner)
     else:
         print(f'Searching repositoriy {owner}/{repository}:')
@@ -32,7 +35,7 @@ def processGitHub(owner, repository=None, branch=None, token=None):
 
     if files == None:
         sys.exit(1)  # exit with non-zero exit code
-        
+
     result = reader.processFiles(files)
 
     return result
@@ -80,7 +83,7 @@ def getFilesFromRepositories(owner):
         page += 1
         count = len(response.json())
 
-    print(f'{len(json_repos)} public repositories found\n')
+    print(f'\t{len(json_repos)} public repositories found\n')
 
     result = {"repositories": []}
 
@@ -91,9 +94,11 @@ def getFilesFromRepositories(owner):
         print(
             f'Warning: Only {number_of_repos} repositories will be analyzed, because the GitHub API rate limit has been exceeded.')
 
-    for i in tqdm(range(0, number_of_repos), desc="Reading repositories", ncols=100, unit=" repo"):
-        # for repository in tqdm(json_repos, desc="Reading repositories", ncols=100, unit=" repo"):
+    pbar = tqdm(range(0, number_of_repos),
+                desc="Reading repositories", ncols=200, unit=" repo", bar_format="Reading repository {n_fmt}/{total_fmt} |{bar:20}| r:{desc}")
+    for i in pbar:
         repository = json_repos[i]
+        pbar.set_description(repository["name"])
         result_repository = getFilesFromRepository(
             owner, repository["name"], repository["default_branch"])
 
@@ -108,24 +113,7 @@ def getFilesFromRepositories(owner):
 def getFilesFromRepository(owner, repository, branch=None):
     # In case the branch is not specified, we need to get the default branch
     if branch == None:
-        response = requests.get(
-            f'{api_url}/repos/{owner}/{repository}', headers=headers)
-        if not response.ok:
-            error = response.json()
-            error_message = error.get('message')
-            if error_message == "Not Found":
-                print(f'Error: Repository {error_message}')
-                sys.exit(1)  # exit with non-zero exit code
-            elif error_message == "Bad credentials":
-                print("Error: Bad credentials")
-                sys.exit(1)  # exit with non-zero exit code
-            elif "API rate limit exceeded" in error_message:
-                print(
-                    "API rate limit exceeded, not all repositories have been analyzed.")
-                return None
-
-        json_repo = response.json()
-        branch = json_repo["default_branch"]
+        branch = getDefaultBranchOfRepository(owner, repository)
 
     response = requests.get(
         f'{api_url}/repos/{owner}/{repository}/git/trees/{branch}?recursive=1', headers=headers)
@@ -133,8 +121,11 @@ def getFilesFromRepository(owner, repository, branch=None):
         error = response.json()
         error_message = error.get('message')
         if error_message == "Not Found":
-            print(f'Error: Repository {error_message}')
-            sys.exit(1)  # exit with non-zero exit code
+            if multipleRepositories:
+                return None
+            else:
+                print(f'Error: Repository {error_message}')
+                sys.exit(1)  # exit with non-zero exit code
         elif error_message == "Bad credentials":
             print("Error: Bad credentials")
             sys.exit(1)  # exit with non-zero exit code
@@ -161,3 +152,27 @@ def getFilesFromRepository(owner, repository, branch=None):
     result_repository["types"] = {"type": "csv_files", "files": csv_files}
 
     return result_repository
+
+
+def getDefaultBranchOfRepository(owner, repository):
+    response = requests.get(
+        f'{api_url}/repos/{owner}/{repository}', headers=headers)
+    if not response.ok:
+        error = response.json()
+        error_message = error.get('message')
+        if error_message == "Not Found":
+            if multipleRepositories:
+                return None
+            else:
+                print(f'Error: Repository {error_message}')
+                sys.exit(1)  # exit with non-zero exit code
+        elif error_message == "Bad credentials":
+            print("Error: Bad credentials")
+            sys.exit(1)  # exit with non-zero exit code
+        elif "API rate limit exceeded" in error_message:
+            print(
+                "API rate limit exceeded, not all repositories have been analyzed.")
+            return None
+
+    json_repo = response.json()
+    return json_repo["default_branch"]

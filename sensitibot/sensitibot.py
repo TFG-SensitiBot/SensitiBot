@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 import tempfile
 
 from github import github
@@ -35,6 +36,9 @@ def main():
     elif args.local:
         result = local.processLocal(args.local)
 
+    if result == None:
+        print("No results found")
+        sys.exit(1)  # exit with non-zero exit code
     data = json.dumps(result, indent=4, sort_keys=True)
 
     # Write result to temp file and open it
