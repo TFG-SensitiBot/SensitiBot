@@ -6,6 +6,16 @@ from tqdm import tqdm
 
 
 def process_files(files, deep_search=False):
+    """
+    Initiates the process of analyzing the files.
+
+    Args:
+        files (dict): The files to analyze.
+        deep_search (bool): If true, the content of the files will be analyzed.
+
+    Returns:
+        dict: The result of analyzing the files.
+    """
     repositories = files["repositories"]
     result = {"repositories": []}
 
@@ -19,9 +29,7 @@ def process_files(files, deep_search=False):
                 csv_files = type["files"]
 
                 # Only analyze if there are files
-                if len(csv_files) == 0:
-                    print("\tNo csv files found")
-                else:
+                if len(csv_files) != 0:
                     csv_result = read_csv_files(csv_files, deep_search)
 
                     # Only add the file type if there are files with errors
@@ -36,6 +44,16 @@ def process_files(files, deep_search=False):
 
 
 def read_csv_files(files, deep_search=False):
+    """
+    Analyzes the csv files.
+
+    Args:
+        files (dict): The files to analyze.
+        deep_search (bool): If true, the content of the files will be analyzed.
+
+    Returns:
+        dict: The result of analyzing the csv files.
+    """
     result = {"type": "csv_files", "files": [], "errors": []}
     pbar = tqdm(files,
                 desc="Analyzing csv files", ncols=300, unit=" repo", bar_format="\tAnalyzing csv file {n_fmt}/{total_fmt} |{bar:20}| f:{desc}")
@@ -77,6 +95,16 @@ def read_csv_files(files, deep_search=False):
 
 
 def analize_headers(name, headers):
+    """
+    Analyzes the headers of a file.
+
+    Args:
+        name (str): The name of the file.
+        headers (list): The headers of the file.
+
+    Returns:
+        list: The headers that may have sensitive information.
+    """
     terms = ["email", "phone", "mobile", "iban", "account", "sha", "gpg", "socialsecurity",
              "creditcard", "debitcard", "card", "name", "surname", "lastname", "firstname", "dni",
              "license", "licenses", "lecenseplates", "ip", "ips", "address", "addresses", "gps",
@@ -100,6 +128,17 @@ def analize_headers(name, headers):
 
 
 def analize_columns(name, data, columns):
+    """
+    Analyzes the columns of a file.
+
+    Args:
+        name (str): The name of the file.
+        data (list): The data of the file.
+        headers (list): The headers of the file.
+
+    Returns:
+        list: The columns that may have sensitive information.
+    """
     positive_columns = []
     number_of_rows = len(data)
     ratio = number_of_rows * 0.1
@@ -128,13 +167,24 @@ def analize_columns(name, data, columns):
 
 
 def analize_field(field):
+    """
+    Analyzes a field.
+
+    Args:
+        field (str): The field to analyze.
+
+    Returns:
+        str: The type of sensitive information that the field may have.
+    """
     email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    iban_pattern = r'^[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}$'
-    phone_pattern = r'^\+?[0-9]{6,}$'
+    iban_pattern = r'^[a-zA-Z]{2}\d{2}[a-zA-Z0-9]{4}\d{7}([a-zA-Z0-9]?){0,16}$'
+    phone_pattern_optional_prefix = r'^(\+\d{1,3})?(\d{4,15})$'
+    phone_pattern_with_prefix = r'^\+\d{1,3}\d{4,15}$'
     dni_pattern = r'^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$'
 
     patterns = {"email": email_pattern, "iban": iban_pattern,
-                "phone": phone_pattern, "dni": dni_pattern}
+                "phone": phone_pattern_optional_prefix,
+                "phone": phone_pattern_with_prefix, "dni": dni_pattern}
 
     for type, pattern in patterns.items():
         if re.match(pattern, field):

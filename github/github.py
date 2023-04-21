@@ -14,6 +14,19 @@ multipleRepositories = False
 
 
 def process_github(owner, repository=None, branch=None, token=None, deep_search=False):
+    """
+    Initiates the process of getting the files from GitHub.
+
+    Args:
+        owner (str): The GitHub user.
+        repository (str): The repository to search.
+        branch (str): The branch to search.
+        token (str): The GitHub token.
+        deep_search (bool): If true, the content of the files will be analyzed.
+
+    Returns:
+        dict: The result of getting the files.
+    """
     global multipleRepositories
     TOKEN = os.getenv("GITHUB_TOKEN", default=None)
     if token != None:
@@ -41,15 +54,58 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
     return result
 
 
-def get_rate_limit():
-    response = requests.get(f'{api_url}/rate_limit', headers=headers)
-    json_data = response.json()
-    return json_data["rate"]["remaining"]
-
-
 def get_files_from_repositories(owner):
+    """
+    Gets the files from all repositories of the GitHub user.
+
+    Args:
+        owner (str): The GitHub user.
+
+    Returns:
+        dict: The files from all repositories of the GitHub user.
+    """
     print(f'Searching repositories for {owner}:')
 
+    json_repos = get_repositories_from_api(owner)
+    if json_repos == None:
+        return None
+
+    print(f'\t{len(json_repos)} public repositories found\n')
+
+    result = {"repositories": []}
+
+    number_of_repos = len(json_repos)
+    remaining = get_rate_limit()
+    if remaining <= number_of_repos:
+        number_of_repos = remaining
+        print(
+            f'Warning: Only {number_of_repos} repositories will be analyzed, because the GitHub API rate limit has been exceeded.')
+
+    pbar = tqdm(json_repos,
+                desc="Reading repositories", ncols=200, unit=" repo", bar_format="Reading repository {n_fmt}/{total_fmt} |{bar:20}| r:{desc}")
+    for repository in pbar:
+        pbar.set_description(repository["name"])
+        result_repository = get_files_from_repository(
+            owner, repository["name"], repository["default_branch"])
+
+        if result_repository == None:
+            continue
+
+        result["repositories"].append(result_repository)
+
+    return result
+
+
+def get_repositories_from_api(owner):
+    """
+    Gets the repositories from the GitHub API.
+
+    Args:
+        owner (str): The GitHub user.
+
+    Returns:
+        dict: The repositories from the GitHub API.
+    """
     json_repos = {}
     per_page = 100
     count = per_page
@@ -83,34 +139,33 @@ def get_files_from_repositories(owner):
         page += 1
         count = len(response.json())
 
-    print(f'\t{len(json_repos)} public repositories found\n')
+    return json_repos
 
-    result = {"repositories": []}
 
-    number_of_repos = len(json_repos)
-    remaining = get_rate_limit()
-    if remaining <= number_of_repos:
-        number_of_repos = remaining
-        print(
-            f'Warning: Only {number_of_repos} repositories will be analyzed, because the GitHub API rate limit has been exceeded.')
+def get_rate_limit():
+    """
+    Gets the rate limit from the GitHub API.
 
-    pbar = tqdm(range(0, number_of_repos),
-                desc="Reading repositories", ncols=200, unit=" repo", bar_format="Reading repository {n_fmt}/{total_fmt} |{bar:20}| r:{desc}")
-    for i in pbar:
-        repository = json_repos[i]
-        pbar.set_description(repository["name"])
-        result_repository = get_files_from_repository(
-            owner, repository["name"], repository["default_branch"])
-
-        if result_repository == None:
-            continue
-
-        result["repositories"].append(result_repository)
-
-    return result
+    Returns:
+        int: The rate limit from the GitHub API.
+    """
+    response = requests.get(f'{api_url}/rate_limit', headers=headers)
+    json_data = response.json()
+    return json_data["rate"]["remaining"]
 
 
 def get_files_from_repository(owner, repository, branch=None):
+    """
+    Gets the files from the GitHub repository.
+
+    Args:
+        owner (str): The GitHub user.
+        repository (str): The repository to search.
+        branch (str): The branch to search.
+
+    Returns:
+        dict: The files from the GitHub repository.
+    """
     # In case the branch is not specified, we need to get the default branch
     if branch == None:
         branch = get_default_branch_of_repository(owner, repository)
@@ -137,6 +192,57 @@ def get_files_from_repository(owner, repository, branch=None):
 
     json_files = response.json()
 
+    result_repository = file_selector(json_files, owner, repository)
+
+    return result_repository
+
+
+def get_default_branch_of_repository(owner, repository):
+    """
+    Gets the default branch of the GitHub repository.
+
+    Args:
+        owner (str): The GitHub user.
+        repository (str): The repository to search.
+
+    Returns:
+        str: The default branch of the GitHub repository.
+    """
+    response = requests.get(
+        f'{api_url}/repos/{owner}/{repository}', headers=headers)
+    if not response.ok:
+        error = response.json()
+        error_message = error.get('message')
+        if error_message == "Not Found":
+            if multipleRepositories:
+                return None
+            else:
+                print(f'Error: Repository {error_message}')
+                sys.exit(1)  # exit with non-zero exit code
+        elif error_message == "Bad credentials":
+            print("Error: Bad credentials")
+            sys.exit(1)  # exit with non-zero exit code
+        elif "API rate limit exceeded" in error_message:
+            print(
+                "API rate limit exceeded, not all repositories have been analyzed.")
+            return None
+
+    json_repo = response.json()
+    return json_repo["default_branch"]
+
+
+def file_selector(json_files, owner, repository):
+    """
+    Selects the data sets files from the GitHub repository.
+
+    Args:
+        json_files (dict): The files from the GitHub repository.
+        owner (str): The GitHub user.
+        repository (str): The repository.
+
+    Returns:
+        dict: The data sets files from the GitHub repository.
+    """
     result_repository = {"name": repository, "types": []}
 
     # Types of files to be considered
@@ -159,27 +265,3 @@ def get_files_from_repository(owner, repository, branch=None):
         return None
 
     return result_repository
-
-
-def get_default_branch_of_repository(owner, repository):
-    response = requests.get(
-        f'{api_url}/repos/{owner}/{repository}', headers=headers)
-    if not response.ok:
-        error = response.json()
-        error_message = error.get('message')
-        if error_message == "Not Found":
-            if multipleRepositories:
-                return None
-            else:
-                print(f'Error: Repository {error_message}')
-                sys.exit(1)  # exit with non-zero exit code
-        elif error_message == "Bad credentials":
-            print("Error: Bad credentials")
-            sys.exit(1)  # exit with non-zero exit code
-        elif "API rate limit exceeded" in error_message:
-            print(
-                "API rate limit exceeded, not all repositories have been analyzed.")
-            return None
-
-    json_repo = response.json()
-    return json_repo["default_branch"]

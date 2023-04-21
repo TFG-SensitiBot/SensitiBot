@@ -4,6 +4,16 @@ from reader import reader
 
 
 def process_local(directory=None, deep_search=False):
+    """
+    Initiates the process of getting the files from the local repository.
+
+    Args:
+        directory (str): The directory to search.
+        deep_search (bool): If true, the content of the files will be analyzed.
+
+    Returns:
+        dict: The result of getting the files.
+    """
     files = get_files_recursively(directory)
 
     if files == None:
@@ -15,6 +25,15 @@ def process_local(directory=None, deep_search=False):
 
 
 def get_files_recursively(directory):
+    """
+    Gets the files from the local directory.
+
+    Args:
+        directory (str): The directory to search.
+
+    Returns:
+        dict: The files from the local directory.
+    """
     if directory == None:
         directory = "./"
 
