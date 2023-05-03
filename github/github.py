@@ -243,25 +243,17 @@ def file_selector(json_files, owner, repository):
     Returns:
         dict: The data sets files from the GitHub repository.
     """
-    result_repository = {"name": repository, "types": []}
-
-    # Types of files to be considered
-    csv_files = []
+    result_repository = {"name": repository, "files": []}
 
     for file in json_files["tree"]:
         if (file["type"] == "blob"):
 
             if file["path"].endswith(".csv"):
-                csv_files.append(
+                result_repository["files"].append(
                     urllib.parse.quote(f'{raw_url}/{owner}/{repository}/master/{file["path"]}', safe=':/.'))
 
-    # Only add the types to the result if there are files of that type
-    if len(csv_files) > 0:
-        result_repository["types"].append(
-            {"type": "csv_files", "files": csv_files})
-
     # Only return the result if there are files of any type
-    if len(result_repository["types"]) == 0:
+    if len(result_repository["files"]) == 0:
         return None
 
     return result_repository

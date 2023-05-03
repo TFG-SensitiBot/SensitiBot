@@ -51,26 +51,4 @@ def main():
     # renderer.show_result_as_html(result)
 
     if args.local:
-        generate_clean_files = input(
-            "\nDo you want to generate clean files? (yes/no) ")
-        while generate_clean_files.lower() not in ("yes", "no"):
-            generate_clean_files = input("Please enter either 'yes' or 'no': ")
-        if generate_clean_files.lower() == "yes":
-
-            replace_files = input(
-                "\nDo you want to replace the files? (yes/no) ")
-            while replace_files.lower() not in ("yes", "no"):
-                replace_files = input("Please enter either 'yes' or 'no': ")
-            if replace_files.lower() == "yes":
-
-                replace_files_2 = input(
-                    "\nAre you sure you want to replace the files? (yes/no) ")
-                while replace_files_2.lower() not in ("yes", "no"):
-                    replace_files_2 = input(
-                        "Please enter either 'yes' or 'no': ")
-                if replace_files_2.lower() == "yes":
-                    cleaner.clean_files(result, True)
-                else:
-                    cleaner.clean_files(result, False)
-            else:
-                cleaner.clean_files(result, False)
+        cleaner.process_cleaner(result)

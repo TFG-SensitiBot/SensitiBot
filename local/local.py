@@ -37,25 +37,17 @@ def get_files_recursively(directory):
     if directory == None:
         directory = "./"
 
-    result = {"repositories": [{"name": "local", "types": []}]}
-
-    # Types of files to be considered
-    csv_files = []
+    result = {"repositories": [{"name": "local", "files": []}]}
 
     for root, _, files in os.walk(directory):
         for filename in files:
 
             if filename.endswith('.csv'):
                 filepath = os.path.join(root, filename)
-                csv_files.append(filepath)
-
-    # Only add the types to the result if there are files of that type
-    if len(csv_files) > 0:
-        result["repositories"][0]["types"].append(
-            {"type": "csv_files", "files": csv_files})
+                result["repositories"][0]["files"].append(filepath)
 
     # Only return the result if there are files of any type
-    if len(result["repositories"][0]["types"]) == 0:
+    if len(result["repositories"][0]["files"]) == 0:
         return None
 
     return result

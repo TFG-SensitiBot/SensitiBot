@@ -21,77 +21,88 @@ def process_files(files, deep_search=False):
 
     for repository in repositories:
         print(f"\nAnalyzing repository {repository['name']}:")
-        result_repository = {
-            "name": repository["name"], "types": []}
+        result_repository = {"name": repository["name"]}
 
-        for type in repository["types"]:
-            if type["type"] == "csv_files":
-                csv_files = type["files"]
+        result_files = []
+        result_errors = []
 
-                # Only analyze if there are files
-                if len(csv_files) != 0:
-                    csv_result = read_csv_files(csv_files, deep_search)
+        pbar = tqdm(repository["files"],
+                    desc="Analyzing files", ncols=300, unit=" repo", bar_format="\tAnalyzing file {n_fmt}/{total_fmt} |{bar:20}| f:{desc}")
+        for file in pbar:
+            pbar.set_description(file[-50:])
 
-                    # Only add the file type if there are files with errors
-                    if len(csv_result["files"]) != 0 or len(csv_result["errors"]) != 0:
-                        result_repository["types"].append(csv_result)
+            result_file, result_error = read_file(file, deep_search)
+            if result_file != None:
+                result_files.append(result_file)
+            if result_error != None:
+                result_errors.append(result_error)
+
+        if len(result_files) != 0:
+            result_repository["files"] = result_files
+        if len(result_errors) != 0:
+            result_repository["errors"] = result_errors
 
         # Only add repository if it has files with errors
-        if len(result_repository["types"]) != 0:
+        if len(result_repository) != 1:
             result["repositories"].append(result_repository)
 
     return result if len(result['repositories']) != 0 else None
 
 
-def read_csv_files(files, deep_search=False):
+def read_file(file, deep_search=False):
     """
-    Analyzes the csv files.
+    Analyzes the file.
 
     Args:
-        files (dict): The files to analyze.
+        file (str): The file to analyze.
+
+    Returns:
+        dict: The result of analyzing the file.
+    """
+    if file.endswith('.csv'):
+        result_file, result_error = read_csv_file(file, deep_search)
+        return result_file, result_error
+
+
+def read_csv_file(file, deep_search=False):
+    """
+    Analyzes the csv file.
+
+    Args:
+        files (str): The file to analyze.
         deep_search (bool): If true, the content of the files will be analyzed.
 
     Returns:
-        dict: The result of analyzing the csv files.
+        dict: The result of analyzing the csv file.
     """
-    result = {"type": "csv_files", "files": [], "errors": []}
-    pbar = tqdm(files,
-                desc="Analyzing csv files", ncols=300, unit=" repo", bar_format="\tAnalyzing csv file {n_fmt}/{total_fmt} |{bar:20}| f:{desc}")
-    errors = []
-    for file in pbar:
-        pbar.set_description(file[-50:])
+    try:
+        data = pd.read_csv(file, comment='#', sep=None, engine='python',
+                           encoding='latin-1', skip_blank_lines=True)
+    except Exception as e:
+        error = {"file": file, "error": str(e)}
+        return None, error
 
-        try:
-            data = pd.read_csv(file, comment='#', sep=None, engine='python',
-                               encoding='latin-1', skip_blank_lines=True)
-        except Exception as e:
-            error = {"file": file, "error": str(e)}
-            errors.append(error)
-            continue
+    result_file = {"name": file}
 
-        result_file = {"name": file}
+    headers = data.columns.values
+    result_headers = analize_headers(file, headers)
 
-        headers = data.columns.values
-        result_headers = analize_headers(file, headers)
+    # Only show headers that have errors
+    if len(result_headers) != 0:
+        result_file["positive_headers"] = result_headers
 
-        # Only show headers that have errors
-        if len(result_headers) != 0:
-            result_file["positive_headers"] = result_headers
+    # Only analyze columns if deep_search is enabled
+    if deep_search:
+        result_columns = analize_columns(file, data, headers)
 
-        # Only analyze columns if deep_search is enabled
-        if deep_search:
-            result_columns = analize_columns(file, data, headers)
+        # Only show columns that have errors
+        if len(result_columns) != 0:
+            result_file["positive_columns"] = result_columns
 
-            # Only show columns that have errors
-            if len(result_columns) != 0:
-                result_file["positive_columns"] = result_columns
+    if len(result_file) == 1:
+        return None, None
 
-        if len(result_file) != 1:
-            result["files"].append(result_file)
-
-    result["errors"] = errors
-
-    return result
+    return result_file, None
 
 
 def analize_headers(name, headers):
