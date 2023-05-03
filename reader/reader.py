@@ -183,7 +183,6 @@ def analize_field(field):
     dni_pattern = r'^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$'
 
     patterns = {"email": email_pattern, "iban": iban_pattern,
-                "phone": phone_pattern_optional_prefix,
                 "phone": phone_pattern_with_prefix, "dni": dni_pattern}
 
     for type, pattern in patterns.items():

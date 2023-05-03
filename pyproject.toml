@@ -10,6 +10,7 @@ packages = [
     { include = "github" },
     { include = "reader" },
     { include = "renderer" },
+    { include = "cleaner" },
 ]
 
 [tool.poetry.dependencies]
