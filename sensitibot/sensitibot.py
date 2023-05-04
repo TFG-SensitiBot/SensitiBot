@@ -1,10 +1,10 @@
 import argparse
 import sys
 
+from cleaner import cleaner
 from github import github
 from local import local
 from renderer import renderer
-from cleaner import cleaner
 
 
 def main():
