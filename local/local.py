@@ -17,9 +17,13 @@ def process_local(directory=None, deep_search=False):
     files = get_files_recursively(directory)
 
     if files == None:
+        print("\nNo dataset files found")
         return None
 
     result = reader.process_files(files, deep_search)
+    if result == None:
+        print("\nYour files are clean!")
+        return None
 
     return result
 

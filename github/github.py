@@ -47,9 +47,13 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
             files = {"repositories": [files]}
 
     if files == None:
+        print("\nNo dataset files found")
         return None
 
     result = reader.process_files(files, deep_search)
+    if result == None:
+        print("\nYour files are clean!")
+        return None
 
     return result
 
@@ -92,6 +96,9 @@ def get_files_from_repositories(owner):
             continue
 
         result["repositories"].append(result_repository)
+
+    if len(result["repositories"]) == 0:
+        return None
 
     return result
 

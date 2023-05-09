@@ -18,20 +18,20 @@ def analize_columns(name, data, columns):
     ratio = number_of_rows * 0.1
 
     for column in columns:
-        positive_fields = []
+        positive_fields = set()
 
         count = 0
         for index, value in data[column].items():
             result_field = analize_field(str(value))
             if result_field != None:
                 count += 1
-                positive_fields.append(result_field)
+                positive_fields.add(result_field)
 
             if count >= ratio:
                 break
 
         if len(positive_fields) != 0:
-            positive_columns[column] = positive_fields
+            positive_columns[column] = list(positive_fields)
 
     return positive_columns
 

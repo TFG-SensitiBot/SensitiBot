@@ -15,8 +15,8 @@ def read_csv_file(file, deep_search=False):
         dict: The result of analyzing the csv file.
     """
     try:
-        data = pd.read_csv(file, comment='#', sep=None, engine='python',
-                           encoding='latin-1', skip_blank_lines=True)
+        data = pd.read_csv(file, comment='#', sep=None,
+                           engine='python', skip_blank_lines=True, dtype=str)
     except Exception as e:
         error = {"file": file, "error": str(e)}
         return None, error

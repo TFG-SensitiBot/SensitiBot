@@ -21,8 +21,8 @@ def clean_csv_file(file, replace_files=False):
     ]
 
     try:
-        data = pd.read_csv(filename, comment='#', sep=None, engine='python',
-                           encoding='latin-1', skip_blank_lines=True)
+        data = pd.read_csv(filename, comment='#', sep=None,
+                           engine='python', skip_blank_lines=True, dtype=str)
     except Exception as e:
         error = {"file": filename, "error": str(e)}
 

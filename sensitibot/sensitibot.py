@@ -44,7 +44,6 @@ def main():
         result = local.process_local(args.local, args.deep_search)
 
     if result == None:
-        print("No results found")
         sys.exit(1)  # exit with non-zero exit code
 
     renderer.show_result_as_text(result)
