@@ -1,3 +1,4 @@
+import datetime
 import webbrowser
 from jinja2 import Template
 import os
@@ -7,7 +8,7 @@ import tempfile
 import json
 
 
-def show_result_as_text(data):
+def show_result_as_text(data, name, deep_search=False):
     """
     Shows the result as text.
 
@@ -20,7 +21,9 @@ def show_result_as_text(data):
     data = json.dumps(data, indent=4, sort_keys=True)
 
     # Write result to temp file and open it
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+    prefix = f'{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_{name}_{"deep-search_" if deep_search else ""}'
+    suffix = '.json'
+    with tempfile.NamedTemporaryFile(prefix=prefix, suffix=suffix, mode='w', delete=False) as f:
         f.write(data)
         f.close()
 

@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+from sensitibot import help_formatter
 from cleaner import cleaner
 from github import github
 from local import local
@@ -8,46 +9,50 @@ from renderer import renderer
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=help_formatter.CustomHelpFormatter)
 
-    # parser.add_argument("owner")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-l', '--local', metavar="PATH", const='./', nargs='?',
-                       help='search in local repository (default: current directory)')
-    group.add_argument('-g', '--github', metavar='USER',
-                       help='search in GitHub\'s user')
-    parser.add_argument('-r', '--repository', metavar='REPO',
-                        help='the repository to use (only if --github is used)')
-    parser.add_argument('-b', '--branch', metavar='BRANCH',
-                        help='the branch to use (only if --repository is used)')
-    parser.add_argument('-t', '--token', metavar='TOKEN',
-                        help='the token to use (only if --github is used)')
     parser.add_argument('--deep-search', action='store_true',
-                        help='analyze content of files')
+                        help='Analyze content of files')
+    subparsers = parser.add_subparsers(dest='command')
+
+    # sensitibot github
+    github_parser = subparsers.add_parser(
+        'github', formatter_class=help_formatter.CustomHelpFormatter, help='Analyze user\'s GitHub repositories')
+    github_parser.add_argument('user', type=str, metavar='USER',
+                               help='The GitHub user to analyze')
+    github_parser.add_argument('-r', '--repository', metavar='REPO',
+                               help='Analyze a specific repository')
+    github_parser.add_argument('-b', '--branch', metavar='BRANCH',
+                               help='Analyze a specific branch')
+    github_parser.add_argument('-t', '--token', metavar='TOKEN',
+                               help='The GitHub token to use for authentication')
+
+    # sensitibot local
+    local_parser = subparsers.add_parser(
+        'local', formatter_class=help_formatter.CustomHelpFormatter, help='Analyze local repository')
+    local_parser.add_argument('path', type=str, metavar='PATH',
+                              const='./', nargs='?', help='The path to analyze')
 
     args = parser.parse_args()
 
     result = ""
+    name = ""
 
-    if args.github:
+    if args.command == 'github':
+        name = args.user
         result = github.process_github(
-            args.github, args.repository, args.branch, args.token, args.deep_search)
+            args.user, args.repository, args.branch, args.token, args.deep_search)
 
-    elif args.local:
-        if args.repository or args.branch or args.token:
-            print(
-                "usage: sensitibot [-h] (-l [PATH] | -g USER) [-r REPO] [-b BRANCH] [-t TOKEN] [--deep-search]")
-            print(
-                "sensitibot: error: arguments -r/--repository, -b/--branch and -t--token: not allowed with argument -l/--local")
-            sys.exit(1)
-
-        result = local.process_local(args.local, args.deep_search)
+    if args.command == 'local':
+        name = "local"
+        result = local.process_local(args.path, args.deep_search)
 
     if result == None:
         sys.exit(1)  # exit with non-zero exit code
 
-    renderer.show_result_as_text(result)
+    renderer.show_result_as_text(result, name, args.deep_search)
     # renderer.show_result_as_html(result)
 
-    if args.local:
+    if args.command == 'local':
         cleaner.process_cleaner(result)

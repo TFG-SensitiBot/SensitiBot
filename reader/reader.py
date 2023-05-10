@@ -25,7 +25,7 @@ def process_files(files, deep_search=False):
         result_errors = []
 
         pbar = tqdm(repository["files"],
-                    desc="Analyzing files", ncols=300, unit=" repo", bar_format="\tAnalyzing file {n_fmt}/{total_fmt} |{bar:20}| f:{desc}")
+                    desc="Analyzing files", ncols=300, unit=" file", ascii=' █', bar_format="\tAnalyzing file {n_fmt}/{total_fmt} |{bar:20}| f:{desc}")
         for file in pbar:
             pbar.set_description(file[-50:])
 

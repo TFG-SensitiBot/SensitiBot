@@ -86,7 +86,7 @@ def get_files_from_repositories(owner):
             f'Warning: Only {number_of_repos} repositories will be analyzed, because the GitHub API rate limit has been exceeded.')
 
     pbar = tqdm(json_repos,
-                desc="Reading repositories", ncols=200, unit=" repo", bar_format="Reading repository {n_fmt}/{total_fmt} |{bar:20}| r:{desc}")
+                desc="Reading repositories", ncols=200, unit=" repo", ascii=' █', bar_format="Reading repository {n_fmt}/{total_fmt} |{bar:20}| r:{desc}")
     for repository in pbar:
         pbar.set_description(repository["name"])
         result_repository = get_files_from_repository(

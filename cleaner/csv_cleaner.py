@@ -17,8 +17,8 @@ def clean_csv_file(file, replace_files=False):
     filename = file["name"]
     positive_headers = file["positive_headers"] if "positive_headers" in file else [
     ]
-    positive_columns = file["positive_columns"] if "positive_columns" in file else [
-    ]
+    positive_columns = file["positive_columns"] if "positive_columns" in file else dict(
+    )
 
     try:
         data = pd.read_csv(filename, comment='#', sep=None,
