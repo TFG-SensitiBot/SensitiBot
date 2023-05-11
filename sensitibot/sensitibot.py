@@ -12,8 +12,6 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=help_formatter.CustomHelpFormatter)
 
-    parser.add_argument('--deep-search', action='store_true',
-                        help='Analyze content of files')
     subparsers = parser.add_subparsers(dest='command')
 
     # sensitibot github
@@ -24,15 +22,19 @@ def main():
     github_parser.add_argument('-r', '--repository', metavar='REPO',
                                help='Analyze a specific repository')
     github_parser.add_argument('-b', '--branch', metavar='BRANCH',
-                               help='Analyze a specific branch')
+                               help='Analyze a specific branch (only if repository is specified)')
     github_parser.add_argument('-t', '--token', metavar='TOKEN',
                                help='The GitHub token to use for authentication')
+    github_parser.add_argument('--deep-search', action='store_true',
+                               help='Analyze content of files')
 
     # sensitibot local
     local_parser = subparsers.add_parser(
         'local', formatter_class=help_formatter.CustomHelpFormatter, help='Analyze local repository')
     local_parser.add_argument('path', type=str, metavar='PATH',
                               const='./', nargs='?', help='The path to analyze')
+    local_parser.add_argument('--deep-search', action='store_true',
+                              help='Analyze content of files')
 
     args = parser.parse_args()
 
