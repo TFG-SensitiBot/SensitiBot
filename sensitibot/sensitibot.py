@@ -16,9 +16,9 @@ def main():
 
     # sensitibot github
     github_parser = subparsers.add_parser(
-        'github', formatter_class=help_formatter.CustomHelpFormatter, help='Analyze user\'s GitHub repositories')
+        'github', formatter_class=help_formatter.CustomHelpFormatter, help='Analyze GitHub repositories')
     github_parser.add_argument('user', type=str, metavar='USER',
-                               help='The GitHub user to analyze')
+                               help='The GitHub user or organization to analyze')
     github_parser.add_argument('-r', '--repository', metavar='REPO',
                                help='Analyze a specific repository')
     github_parser.add_argument('-b', '--branch', metavar='BRANCH',
