@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from cleaner import csv_cleaner
+from cleaner import csv_cleaner, tsv_cleaner
 
 
 def process_cleaner(files):
@@ -61,6 +61,9 @@ def clean_file(file):
     if clean:
         if file["name"].endswith('.csv'):
             csv_cleaner.clean_csv_file(file, replace)
+
+        if file["name"].endswith('.tsv'):
+            tsv_cleaner.clean_tsv_file(file, replace)
 
 
 def ask_clean_file():

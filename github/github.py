@@ -252,10 +252,12 @@ def file_selector(json_files, owner, repository):
     """
     result_repository = {"name": repository, "files": []}
 
+    extensions = [".csv", ".tsv"]
+
     for file in json_files["tree"]:
         if (file["type"] == "blob"):
 
-            if file["path"].endswith(".csv"):
+            if any(file["path"].endswith(ext) for ext in extensions):
                 result_repository["files"].append(
                     urllib.parse.quote(f'{raw_url}/{owner}/{repository}/master/{file["path"]}', safe=':/.'))
 

@@ -43,10 +43,12 @@ def get_files_recursively(directory):
 
     result = {"repositories": [{"name": "local", "files": []}]}
 
+    extensions = [".csv", ".tsv"]
+
     for root, _, files in os.walk(directory):
         for filename in files:
 
-            if filename.endswith('.csv'):
+            if any(filename.endswith(ext) for ext in extensions):
                 filepath = os.path.join(root, filename)
                 result["repositories"][0]["files"].append(filepath)
 
