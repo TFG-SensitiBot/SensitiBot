@@ -3,13 +3,13 @@ import os
 import pandas as pd
 
 
-def clean_tsv_file(file, replace_files=False):
+def clean_tsv_file(file, replace_file=False):
     """
-    Cleans the tsv files.
+    Cleans tsv files.
 
     Args:
-        files (list): The tsv files to clean.
-        replace_files (bool): If true, the files will be replaced by the clean ones.
+        files (dict): The tsv file to clean.
+        replace_files (bool): If true, the file will be replaced by the clean one.
 
     Returns:
         None.
@@ -33,7 +33,7 @@ def clean_tsv_file(file, replace_files=False):
 
     base_filename, extension = os.path.splitext(filename)
 
-    if not replace_files:
+    if not replace_file:
         base_filename = base_filename + "_clean"
 
     new_filename = base_filename + extension

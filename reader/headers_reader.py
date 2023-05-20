@@ -1,12 +1,11 @@
 import itertools
 
 
-def analize_headers(name, headers):
+def analize_headers(headers):
     """
     Analyzes the headers of a file.
 
     Args:
-        name (str): The name of the file.
         headers (list): The headers of the file.
 
     Returns:

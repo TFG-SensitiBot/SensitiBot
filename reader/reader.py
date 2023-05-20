@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from reader import csv_reader, tsv_reader
+from reader import csv_reader, excel_reader, tsv_reader
 
 
 def process_files(files, deep_search=False):
@@ -64,3 +64,10 @@ def read_file(file, deep_search=False):
     if file.endswith('.tsv'):
         result_file, result_error = tsv_reader.read_tsv_file(file, deep_search)
         return result_file, result_error
+
+    if file.endswith('.xls') or file.endswith('.xlsx'):
+        result_file, result_error = excel_reader.read_excel_file(
+            file, deep_search)
+        return result_file, result_error
+
+    return None, None

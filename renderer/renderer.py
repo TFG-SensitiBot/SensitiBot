@@ -18,6 +18,9 @@ def show_result_as_text(data, name, deep_search=False):
     Returns:
         None
     """
+    generate_report = ask_generate_report()
+    if not generate_report:
+        return
     data = json.dumps(data, indent=4, sort_keys=True)
 
     # Write result to temp file and open it
@@ -75,3 +78,22 @@ def render_html_from_template(data):
     # Render the template with the data
     html = template.render(data=data)
     return html
+
+
+def ask_generate_report():
+    """
+    Asks the user if he wants to generate a report.
+
+    Args:
+        None.
+
+    Returns:
+        bool: True if the user wants to generate a report, False otherwise.
+    """
+    ask_generate = input("\nDo you want to generate a report? (yes/no): ")
+    while ask_generate.lower() not in ("yes", "no"):
+        ask_generate = input("Please enter either 'yes' or 'no': ")
+    if ask_generate.lower() == "yes":
+        return True
+
+    return False

@@ -252,7 +252,7 @@ def file_selector(json_files, owner, repository):
     """
     result_repository = {"name": repository, "files": []}
 
-    extensions = [".csv", ".tsv"]
+    extensions = [".csv", ".tsv", ".xls", ".xlsx"]
 
     for file in json_files["tree"]:
         if (file["type"] == "blob"):

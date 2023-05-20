@@ -1,11 +1,11 @@
 from tqdm import tqdm
 
-from cleaner import csv_cleaner, tsv_cleaner
+from cleaner import csv_cleaner, excel_cleaner, show_matches, tsv_cleaner
 
 
 def process_cleaner(files):
     generate_clean_files = input(
-        "\nDo you want to generate clean files? (yes/no) ")
+        "\nDo you want to generate clean files? (yes/no): ")
     while generate_clean_files.lower() not in ("yes", "no"):
         generate_clean_files = input("Please enter either 'yes' or 'no': ")
     if generate_clean_files.lower() == "yes":
@@ -46,13 +46,11 @@ def clean_file(file):
 
     matches = ""
 
-    if "positive_headers" in file:
-        for positive_header in file['positive_headers']:
-            matches = f"{matches}\tHeader {positive_header} may contain sensible data\n"
+    if file["name"].endswith('.csv') or file["name"].endswith('.tsv'):
+        matches = show_matches.get_matches_csv_tsv(file)
 
-    if "positive_columns" in file:
-        for positive_column, positive_fields in file['positive_columns'].items():
-            matches = f"{matches}\tColumn: {positive_column}:\tDetected fields: {positive_fields}\n"
+    if file["name"].endswith('.xlsx') or file["name"].endswith('.xls'):
+        matches = show_matches.get_matches_excel(file)
 
     print(matches)
 
@@ -64,6 +62,9 @@ def clean_file(file):
 
         if file["name"].endswith('.tsv'):
             tsv_cleaner.clean_tsv_file(file, replace)
+
+        if file["name"].endswith('.xlsx') or file["name"].endswith('.xls'):
+            excel_cleaner.clean_excel_file(file, replace)
 
 
 def ask_clean_file():
@@ -77,23 +78,23 @@ def ask_clean_file():
         bool: True if the user wants to clean the file, False otherwise.
         bool: True if the user wants to replace the file, False otherwise.
     """
-    ask_clean = input("Do you want to clean this file? (yes/no) ")
+    ask_clean = input("Do you want to clean this file? (yes/no): ")
     while ask_clean.lower() not in ("yes", "no"):
         ask_clean = input("Please enter either 'yes' or 'no': ")
     if ask_clean.lower() == "yes":
 
-        replace_files = input(
-            "Do you want to replace the files? (yes/no) ")
-        while replace_files.lower() not in ("yes", "no"):
-            replace_files = input("Please enter either 'yes' or 'no': ")
-        if replace_files.lower() == "yes":
+        replace_file = input(
+            "Do you want to replace the file? (yes/no): ")
+        while replace_file.lower() not in ("yes", "no"):
+            replace_file = input("Please enter either 'yes' or 'no': ")
+        if replace_file.lower() == "yes":
 
-            replace_files_2 = input(
-                "Are you sure you want to replace the files? (yes/no) ")
-            while replace_files_2.lower() not in ("yes", "no"):
-                replace_files_2 = input(
+            replace_file_2 = input(
+                "Are you sure you want to replace the file? (yes/no): ")
+            while replace_file_2.lower() not in ("yes", "no"):
+                replace_file_2 = input(
                     "Please enter either 'yes' or 'no': ")
-            if replace_files_2.lower() == "yes":
+            if replace_file_2.lower() == "yes":
                 return True, True
             else:
                 return True, False

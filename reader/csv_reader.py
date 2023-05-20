@@ -24,7 +24,7 @@ def read_csv_file(file, deep_search=False):
     result_file = {"name": file}
 
     headers = data.columns.values
-    result_headers = headers_reader.analize_headers(file, headers)
+    result_headers = headers_reader.analize_headers(headers)
 
     # Only show headers that have errors
     if len(result_headers) != 0:
@@ -32,7 +32,7 @@ def read_csv_file(file, deep_search=False):
 
     # Only analyze columns if deep_search is enabled
     if deep_search:
-        result_columns = columns_reader.analize_columns(file, data, headers)
+        result_columns = columns_reader.analize_columns(data, headers)
 
         # Only show columns that have errors
         if len(result_columns) != 0:

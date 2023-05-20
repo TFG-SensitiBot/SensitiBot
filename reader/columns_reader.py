@@ -1,12 +1,11 @@
 import re
 
 
-def analize_columns(name, data, columns):
+def analize_columns(data, columns):
     """
     Analyzes the columns of a file.
 
     Args:
-        name (str): The name of the file.
         data (list): The data of the file.
         headers (list): The headers of the file.
 
