@@ -1,6 +1,8 @@
 import argparse
 import sys
 
+import pkg_resources
+
 from sensitibot import help_formatter
 from cleaner import cleaner
 from github import github
@@ -13,6 +15,8 @@ def main():
         formatter_class=help_formatter.CustomHelpFormatter)
 
     subparsers = parser.add_subparsers(dest='command')
+    parser.add_argument('-v', '--version', action='store_true',
+                        help='show the version number and exit')
 
     # sensitibot github
     github_parser = subparsers.add_parser(
@@ -37,6 +41,11 @@ def main():
                               help='Analyze content of files')
 
     args = parser.parse_args()
+
+    if args.version:
+        VERSION = pkg_resources.get_distribution(parser.prog).version
+        print(f"{VERSION}\n")
+        sys.exit(1)  # exit with non-zero exit code
 
     result = ""
     name = ""
