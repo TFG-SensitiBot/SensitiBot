@@ -67,3 +67,5 @@ def main():
 
     if args.command == 'local':
         cleaner.process_cleaner(result)
+
+    print("")
