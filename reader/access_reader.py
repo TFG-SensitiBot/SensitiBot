@@ -1,5 +1,6 @@
 import pandas as pd
 import pyodbc
+import sqlalchemy as sa
 
 from reader import columns_reader, headers_reader
 
@@ -17,9 +18,13 @@ def read_access_file(file, deep_search=False):
     """
     try:
         # Establish a connection to the Access database
-        conn_str = r"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={}".format(file)
-        conn = pyodbc.connect(conn_str)
-        cursor = conn.cursor()
+        connection_string = (
+            r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};" +
+            r"DBQ={};".format(file) +
+            r"ExtendedAnsiSQL=1;"
+        )
+        connection_url = sa.engine.URL.create("access+pyodbc", query={"odbc_connect": connection_string})
+        engine = sa.create_engine(connection_url)
     except Exception as e:
         error = {"file": file, "error": str(e)}
         return None, error
@@ -27,10 +32,8 @@ def read_access_file(file, deep_search=False):
     tables_to_read = []
 
     # Query to retrieve table names
-    table_names = []
-    
-    for i in cursor.tables(tableType='Table'):
-        table_names.append(i.table_name)
+    inspector = sa.inspect(engine)
+    table_names = inspector.get_table_names()
 
     read_all_tables = ask_read_all_tables(len(table_names))
     if read_all_tables:
@@ -45,7 +48,7 @@ def read_access_file(file, deep_search=False):
 
         # Query to retrieve all records from the table
         query = f"SELECT * FROM {table_name}"
-        table_data = pd.read_sql(query, conn)
+        table_data = pd.read_sql_query(query, engine)
 
         result_table = read_table(table_name, table_data, deep_search)
 
@@ -58,7 +61,7 @@ def read_access_file(file, deep_search=False):
     if len(result_file) == 1:
         return None, None
 
-    conn.close()
+    engine.dispose()
 
     return result_file, None
 
