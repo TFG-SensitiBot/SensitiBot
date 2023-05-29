@@ -27,3 +27,19 @@ def get_matches_excel(file):
                 for positive_column, positive_fields in positive_sheet['positive_columns'].items():
                     matches = f"{matches}\t\tColumn: {positive_column}:\tDetected fields: {positive_fields}\n"
     return matches
+
+def get_matches_access(file):
+    matches = ""
+
+    if "positive_tables" in file:
+        for positive_table in file['positive_tables']:
+            matches = f"{matches}\tTable {positive_table['name']}:\n"
+
+            if "positive_headers" in positive_table:
+                for positive_header in positive_table['positive_headers']:
+                    matches = f"{matches}\t\tHeader {positive_header} may contain sensible data\n"
+
+            if "positive_columns" in positive_table:
+                for positive_column, positive_fields in positive_table['positive_columns'].items():
+                    matches = f"{matches}\t\tColumn: {positive_column}:\tDetected fields: {positive_fields}\n"
+    return matches

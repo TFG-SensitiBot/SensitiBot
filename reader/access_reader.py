@@ -1,5 +1,7 @@
+import shutil
+import tempfile
 import pandas as pd
-import pyodbc
+import requests
 import sqlalchemy as sa
 
 from reader import columns_reader, headers_reader
@@ -16,11 +18,15 @@ def read_access_file(file, deep_search=False):
     Returns:
         dict: The result of analyzing the access file.
     """
+    new_file = file
+    if file.startswith("http"):
+        new_file = download_file(file)
+
     try:
         # Establish a connection to the Access database
         connection_string = (
             r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};" +
-            r"DBQ={};".format(file) +
+            r"DBQ={};".format(new_file) +
             r"ExtendedAnsiSQL=1;"
         )
         connection_url = sa.engine.URL.create("access+pyodbc", query={"odbc_connect": connection_string})
@@ -31,10 +37,14 @@ def read_access_file(file, deep_search=False):
 
     tables_to_read = []
 
-    # Query to retrieve table names
-    inspector = sa.inspect(engine)
-    table_names = inspector.get_table_names()
-
+    try:
+        # Query to retrieve table names
+        inspector = sa.inspect(engine)
+        table_names = inspector.get_table_names()
+    except Exception as e:
+        error = {"file": file, "error": str(e)}
+        return None, error
+    
     read_all_tables = ask_read_all_tables(len(table_names))
     if read_all_tables:
         tables_to_read = table_names
@@ -116,3 +126,16 @@ def ask_which_tables(table_names):
             tables_to_read.append(table_name)
 
     return tables_to_read
+
+def download_file(file):
+    # Create a temporary file to save the downloaded Access file
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temp_file_path = temp_file.name
+
+    # Download the Access file from GitHub
+    response = requests.get(file, stream=True)
+    with open(temp_file_path, "wb") as f:
+        response.raw.decode_content = True
+        shutil.copyfileobj(response.raw, f)
+
+    return temp_file_path
