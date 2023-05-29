@@ -3,13 +3,14 @@ from tqdm import tqdm
 from reader import access_reader, csv_reader, excel_reader, tsv_reader
 
 
-def process_files(files, deep_search=False):
+def process_files(files, deep_search=False, wide_search=False):
     """
     Initiates the process of analyzing the files.
 
     Args:
         files (dict): The files to analyze.
         deep_search (bool): If true, the content of the files will be analyzed.
+        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of analyzing the files.
@@ -29,7 +30,7 @@ def process_files(files, deep_search=False):
         for file in pbar:
             pbar.set_description(file[-50:])
 
-            result_file, result_error = read_file(file, deep_search)
+            result_file, result_error = read_file(file, deep_search, wide_search)
             if result_file != None:
                 result_files.append(result_file)
             if result_error != None:
@@ -47,12 +48,14 @@ def process_files(files, deep_search=False):
     return result if len(result['repositories']) != 0 else None
 
 
-def read_file(file, deep_search=False):
+def read_file(file, deep_search=False, wide_search=False):
     """
     Analyzes the file.
 
     Args:
         file (str): The file to analyze.
+        deep_search (bool): If true, the content of the files will be analyzed.
+        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of analyzing the file.
@@ -67,12 +70,12 @@ def read_file(file, deep_search=False):
 
     if file.endswith('.xls') or file.endswith('.xlsx'):
         result_file, result_error = excel_reader.read_excel_file(
-            file, deep_search)
+            file, deep_search, wide_search)
         return result_file, result_error
 
     if file.endswith('.mdb') or file.endswith('.accdb'):
         result_file, result_error = access_reader.read_access_file(
-            file, deep_search)
+            file, deep_search, wide_search)
         return result_file, result_error
 
     return None, None

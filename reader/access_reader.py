@@ -7,13 +7,14 @@ import sqlalchemy as sa
 from reader import columns_reader, headers_reader
 
 
-def read_access_file(file, deep_search=False):
+def read_access_file(file, deep_search=False, wide_search=False):
     """
     Analyzes the access file.
 
     Args:
         files (str): The file to analyze.
         deep_search (bool): If true, the content of the files will be analyzed.
+        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of analyzing the access file.
@@ -35,8 +36,6 @@ def read_access_file(file, deep_search=False):
         error = {"file": file, "error": str(e)}
         return None, error
 
-    tables_to_read = []
-
     try:
         # Query to retrieve table names
         inspector = sa.inspect(engine)
@@ -45,12 +44,12 @@ def read_access_file(file, deep_search=False):
         error = {"file": file, "error": str(e)}
         return None, error
     
-    read_all_tables = ask_read_all_tables(len(table_names))
-    if read_all_tables:
-        tables_to_read = table_names
-    else:
-        tables_to_read = ask_which_tables(table_names)
-
+    tables_to_read = table_names
+    if not wide_search and len(table_names) > 1:
+        read_all_sheets = ask_read_all_tables(len(table_names))
+        if not read_all_sheets:
+            tables_to_read = ask_which_tables(table_names)
+    
     result_file = {"name": file}
 
     result_tables = []
@@ -116,11 +115,11 @@ def ask_which_tables(table_names):
 
     for table_name in table_names:
         ask_table = input(
-            f"\t\tRead table {table_name}? (yes/no): ")
+            f"\t\t\tRead table {table_name}? (yes/no): ")
 
         while ask_table.lower() not in ("yes", "no"):
             ask_table = input(
-                "\t\tPlease enter either 'yes' or 'no': ")
+                "\t\t\tPlease enter either 'yes' or 'no': ")
 
         if ask_table.lower() == "yes":
             tables_to_read.append(table_name)

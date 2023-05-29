@@ -26,7 +26,8 @@ def analize_headers(headers):
 
     positive_headers = []
     for header in headers:
-        clean_eader = header.strip().lower().replace("_", " ").replace("-", " ")
+        header_str = str(header)
+        clean_eader = header_str.strip().lower().replace("_", " ").replace("-", " ")
         if clean_eader in combinations:
             positive_headers.append(header)
 

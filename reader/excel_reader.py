@@ -3,13 +3,14 @@ import pandas as pd
 from reader import columns_reader, headers_reader
 
 
-def read_excel_file(file, deep_search=False):
+def read_excel_file(file, deep_search=False, wide_search=False):
     """
     Analyzes the excel file.
 
     Args:
         files (str): The file to analyze.
         deep_search (bool): If true, the content of the files will be analyzed.
+        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of analyzing the excel file.
@@ -20,14 +21,13 @@ def read_excel_file(file, deep_search=False):
         error = {"file": file, "error": str(e)}
         return None, error
 
-    sheets_to_read = []
     sheet_names = data.sheet_names
+    sheets_to_read = sheet_names
 
-    read_all_sheets = ask_read_all_sheets(len(sheet_names))
-    if read_all_sheets:
-        sheets_to_read = sheet_names
-    else:
-        sheets_to_read = ask_which_sheets(sheet_names)
+    if not wide_search and len(sheet_names) > 1:
+        read_all_sheets = ask_read_all_sheets(len(sheet_names))
+        if not read_all_sheets:
+            sheets_to_read = ask_which_sheets(sheet_names)
 
     result_file = {"name": file}
 
@@ -88,11 +88,11 @@ def ask_which_sheets(sheet_names):
 
     for sheet_name in sheet_names:
         ask_sheet = input(
-            f"\t\tRead sheet {sheet_name}? (yes/no): ")
+            f"\t\t\tRead sheet {sheet_name}? (yes/no): ")
 
         while ask_sheet.lower() not in ("yes", "no"):
             ask_sheet = input(
-                "\t\tPlease enter either 'yes' or 'no': ")
+                "\t\t\tPlease enter either 'yes' or 'no': ")
 
         if ask_sheet.lower() == "yes":
             sheets_to_read.append(sheet_name)

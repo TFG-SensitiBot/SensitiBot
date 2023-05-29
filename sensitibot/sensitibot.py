@@ -31,6 +31,8 @@ def main():
                                help='The GitHub token to use for authentication')
     github_parser.add_argument('--deep-search', action='store_true',
                                help='Analyze content of files')
+    github_parser.add_argument('--wide-search', action='store_true',
+                               help='Analyze all tables or sheets in Office files')
 
     # sensitibot local
     local_parser = subparsers.add_parser(
@@ -39,6 +41,8 @@ def main():
                               const='./', nargs='?', help='The path to analyze')
     local_parser.add_argument('--deep-search', action='store_true',
                               help='Analyze content of files')
+    local_parser.add_argument('--wide-search', action='store_true',
+                              help='Analyze all tables or sheets in Office files')
 
     args = parser.parse_args()
 
@@ -53,11 +57,11 @@ def main():
     if args.command == 'github':
         name = args.user
         result = github.process_github(
-            args.user, args.repository, args.branch, args.token, args.deep_search)
+            args.user, args.repository, args.branch, args.token, args.deep_search, args.wide_search)
 
     if args.command == 'local':
         name = "local"
-        result = local.process_local(args.path, args.deep_search)
+        result = local.process_local(args.path, args.deep_search, args.wide_search)
 
     if result == None:
         sys.exit(1)  # exit with non-zero exit code

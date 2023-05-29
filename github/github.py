@@ -13,7 +13,7 @@ headers = {}
 multipleRepositories = False
 
 
-def process_github(owner, repository=None, branch=None, token=None, deep_search=False):
+def process_github(owner, repository=None, branch=None, token=None, deep_search=False, wide_search=False):
     """
     Initiates the process of getting the files from GitHub.
 
@@ -23,6 +23,7 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
         branch (str): The branch to search.
         token (str): The GitHub token.
         deep_search (bool): If true, the content of the files will be analyzed.
+        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of getting the files.
@@ -50,7 +51,7 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
         print("\nNo dataset files found")
         return None
 
-    result = reader.process_files(files, deep_search)
+    result = reader.process_files(files, deep_search, wide_search)
     if result == None:
         print("\nYour files are clean!")
         return None
