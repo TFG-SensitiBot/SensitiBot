@@ -364,7 +364,6 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.20.3", markers = "python_version < \"3.10\""},
     {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
     {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
 ]
@@ -696,5 +695,5 @@ files = [
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9"
-content-hash = "a38cbf32d21aa4f143c544dacad8e5a5b68fdec4609994b7747ca0381ff3b376"
+python-versions = "^3.11"
+content-hash = "951fa19a8fac47f5a9e40771f53949596b785a0a5d6a3268abd484dfa65a47d7"

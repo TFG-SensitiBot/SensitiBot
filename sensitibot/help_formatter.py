@@ -9,5 +9,9 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         args_string = self._format_args(action, default)
         return ', '.join(action.option_strings) + ' ' + args_string
 
+    def format_help(self):
+        help_text = super().format_help()
+        return help_text + '\n'  # Append an empty line at the end
+
     def __init__(self, prog):
         super().__init__(prog, max_help_position=40, width=100)

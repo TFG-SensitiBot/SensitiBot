@@ -1,5 +1,6 @@
 import argparse
 import sys
+from importlib.metadata import version
 
 import pkg_resources
 
@@ -12,11 +13,14 @@ from renderer import renderer
 
 def main():
     parser = argparse.ArgumentParser(
-        formatter_class=help_formatter.CustomHelpFormatter)
+        prog='SensitiBot',
+        description='SensitiBot is a tool to analyze datasets for sensitive information.',
+        formatter_class=help_formatter.CustomHelpFormatter
+    )
 
     subparsers = parser.add_subparsers(dest='command')
-    parser.add_argument('-v', '--version', action='store_true',
-                        help='show the version number and exit')
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s ' + version('SensitiBot'))
 
     # sensitibot github
     github_parser = subparsers.add_parser(
@@ -46,11 +50,6 @@ def main():
 
     args = parser.parse_args()
 
-    if args.version:
-        VERSION = pkg_resources.get_distribution(parser.prog).version
-        print(f"{VERSION}\n")
-        sys.exit(1)  # exit with non-zero exit code
-
     result = ""
     name = ""
 
@@ -61,7 +60,8 @@ def main():
 
     if args.command == 'local':
         name = "local"
-        result = local.process_local(args.path, args.deep_search, args.wide_search)
+        result = local.process_local(
+            args.path, args.deep_search, args.wide_search)
 
     if result == None:
         sys.exit(1)  # exit with non-zero exit code

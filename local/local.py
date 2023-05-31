@@ -44,7 +44,7 @@ def get_files_recursively(directory):
 
     result = {"repositories": [{"name": "local", "files": []}]}
 
-    extensions = [".csv", ".tsv", ".xls", ".xlsx", ".mdb", ".accdb"]
+    extensions = [".csv", ".tsv", ".xlsx", ".mdb", ".accdb"]
 
     for root, _, files in os.walk(directory):
         for filename in files:
