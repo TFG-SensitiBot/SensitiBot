@@ -44,7 +44,8 @@ def get_files_recursively(directory):
 
     result = {"repositories": [{"name": "local", "files": []}]}
 
-    extensions = [".csv", ".tsv", ".xlsx", ".mdb", ".accdb"]
+    extensions = [".csv", ".tsv", ".xlsx", "xlsm", "xltx",
+                  "xltm", ".mdb", ".accdb", ".json", ".jsonl"]
 
     print(f'Searching directory {directory}:')
 
