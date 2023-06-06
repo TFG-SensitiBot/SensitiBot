@@ -125,10 +125,10 @@ def get_repositories_from_api(owner):
             error = response.json()
             error_message = error.get('message')
             if error_message == "Not Found":
-                print(f'Error: Github User or Organization {error_message}')
+                print(f'Error: Github User or Organization {error_message}\n')
                 sys.exit(1)  # exit with non-zero exit code
             elif error_message == "Bad credentials":
-                print("Error: Bad credentials")
+                print("Error: Bad credentials\n")
                 sys.exit(1)  # exit with non-zero exit code
             elif "API rate limit exceeded" in error_message:
                 if page == 1:   # If the first request has already exceeded the rate limit, we can't continue
@@ -187,10 +187,10 @@ def get_files_from_repository(owner, repository, branch=None):
             if multipleRepositories:
                 return None
             else:
-                print(f'Error: Repository {error_message}')
+                print(f'Error: Repository {error_message}\n')
                 sys.exit(1)  # exit with non-zero exit code
         elif error_message == "Bad credentials":
-            print("Error: Bad credentials")
+            print("Error: Bad credentials\n")
             sys.exit(1)  # exit with non-zero exit code
         elif error_message == "Git Repository is empty.":
             return None
@@ -225,10 +225,10 @@ def get_default_branch_of_repository(owner, repository):
             if multipleRepositories:
                 return None
             else:
-                print(f'Error: Repository {error_message}')
+                print(f'Error: Repository {error_message}\n')
                 sys.exit(1)  # exit with non-zero exit code
         elif error_message == "Bad credentials":
-            print("Error: Bad credentials")
+            print("Error: Bad credentials\n")
             sys.exit(1)  # exit with non-zero exit code
         elif "API rate limit exceeded" in error_message:
             print(

@@ -46,6 +46,8 @@ def get_files_recursively(directory):
 
     extensions = [".csv", ".tsv", ".xlsx", ".mdb", ".accdb"]
 
+    print(f'Searching directory {directory}:')
+
     for root, _, files in os.walk(directory):
         for filename in files:
 

@@ -15,7 +15,7 @@ def main():
         formatter_class=custom_formatters.CustomHelpFormatter
     )
 
-    subparsers = parser.add_subparsers(dest='command', metavar='subcommands:')
+    subparsers = parser.add_subparsers(dest='command')
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s ' + version('SensitiBot'))
 
@@ -54,6 +54,10 @@ def main():
     result = ""
     name = ""
 
+    if args.command == None:
+        parser.print_help()
+        sys.exit(1)
+
     if args.command == 'github':
         name = args.user
         result = github.process_github(
@@ -65,10 +69,10 @@ def main():
             args.path, args.deep_search, args.wide_search)
 
     if result == None:
+        print("")
         sys.exit(1)  # exit with non-zero exit code
 
     renderer.show_result_as_text(result, name, args.deep_search)
-    # renderer.show_result_as_html(result)
 
     if args.command == 'local':
         cleaner.process_cleaner(result)
