@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from cleaner import access_cleaner, csv_cleaner, excel_cleaner, show_matches, tsv_cleaner
+from cleaner import access_cleaner, csv_cleaner, excel_cleaner, json_cleaner, show_matches, tsv_cleaner
 
 
 def process_cleaner(files):
@@ -46,8 +46,9 @@ def clean_file(file):
 
     matches = ""
 
-    if file["name"].endswith('.csv') or file["name"].endswith('.tsv'):
-        matches = show_matches.get_matches_csv_tsv(file)
+    basic_extensions = [".csv", ".tsv", ".json", ".jsonl"]
+    if any(file["name"].endswith(ext) for ext in basic_extensions):
+        matches = show_matches.get_matches(file)
 
     if file["name"].endswith('.xlsx') or file["name"].endswith('.xls'):
         matches = show_matches.get_matches_excel(file)
@@ -66,11 +67,15 @@ def clean_file(file):
         if file["name"].endswith('.tsv'):
             tsv_cleaner.clean_tsv_file(file, replace)
 
-        if file["name"].endswith('.xlsx') or file["name"].endswith('.xls'):
+        excel_extensions = [".xlsx", ".xlsm", ".xltx", ".xltm"]
+        if any(file["name"].endswith(ext) for ext in excel_extensions):
             excel_cleaner.clean_excel_file(file, replace)
 
         if file["name"].endswith('.mdb') or file["name"].endswith('.accdb'):
             access_cleaner.clean_access_file(file, replace)
+
+        if file["name"].endswith('.json') or file["name"].endswith('.jsonl'):
+            json_cleaner.clean_json_file(file, replace)
 
 
 def ask_clean_file():

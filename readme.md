@@ -9,7 +9,7 @@ Install sensitibot using pip. It is advisable to do this in a Python virtualenv 
 $ pip install sensitibot
 ```
 
-> **Note:** Other methods of instalation can be found in the [installation instructions](https://github.com/TFG-SensitiBot/SensitiBot/wiki/Installation).
+> **Note:** Other methods of installation can be found in the [installation instructions](https://github.com/TFG-SensitiBot/SensitiBot/wiki/Installation).
 
 
 ## Documentation

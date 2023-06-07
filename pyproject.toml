@@ -32,4 +32,5 @@ sensitibot = "sensitibot.sensitibot:main"
 
 [tool.poetry.urls]
 Homepage = "https://pypi.org/project/sensitibot/"
+Documentation = "https://github.com/TFG-SensitiBot/SensitiBot/wiki"
 Source = "https://github.com/TFG-SensitiBot/SensitiBot"
