@@ -25,8 +25,9 @@ def clean_json_file(file, replace_file=False):
     )
 
     try:
+        is_linear = filename.endswith(".jsonl")
         data = pd.read_json(
-            filename, lines=filename.endswith(".jsonl"), dtype=str)
+            filename, lines=is_linear, dtype=str)
     except Exception as e:
         error = {"file": filename, "error": str(e)}
 
@@ -42,4 +43,4 @@ def clean_json_file(file, replace_file=False):
 
     new_filename = base_filename + extension
     data.to_json(new_filename, orient="records",
-                 lines=filename.endswith(".jsonl"))
+                 lines=is_linear, indent=0 if is_linear else 4)
