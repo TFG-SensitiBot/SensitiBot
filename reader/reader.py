@@ -1,6 +1,7 @@
 from tqdm import tqdm
 
-from reader import access_reader, csv_reader, excel_reader, json_reader, tsv_reader
+from reader import (access_reader, csv_reader, excel_reader, json_reader,
+                    tsv_reader)
 
 
 def process_files(files, deep_search=False, wide_search=False):

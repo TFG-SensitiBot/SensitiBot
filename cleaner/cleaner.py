@@ -1,6 +1,5 @@
-from tqdm import tqdm
-
-from cleaner import access_cleaner, csv_cleaner, excel_cleaner, json_cleaner, show_matches, tsv_cleaner
+from cleaner import (access_cleaner, csv_cleaner, excel_cleaner, json_cleaner,
+                     show_matches, tsv_cleaner)
 
 
 def process_cleaner(files):
@@ -25,10 +24,7 @@ def clean_files(files):
     """
     repository = files["repositories"][0]
 
-    # pbar = tqdm(repository["files"],
-    #             desc="Cleaning files", ncols=300, unit=" repo", bar_format="\tCleaning file {n_fmt}/{total_fmt} |{bar:20}| f:{desc}")
     for file in repository["files"]:
-        # pbar.set_description(file["name"][-50:])
         clean_file(file)
 
 

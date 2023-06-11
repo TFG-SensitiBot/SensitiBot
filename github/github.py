@@ -1,5 +1,4 @@
 import os
-import sys
 import urllib
 
 import requests
@@ -11,6 +10,10 @@ api_url = 'https://api.github.com'
 raw_url = 'https://raw.githubusercontent.com'
 headers = {}
 multipleRepositories = False
+
+
+class GitHubAPIException(Exception):
+    pass
 
 
 def process_github(owner, repository=None, branch=None, token=None, deep_search=False, wide_search=False):
@@ -125,11 +128,10 @@ def get_repositories_from_api(owner):
             error = response.json()
             error_message = error.get('message')
             if error_message == "Not Found":
-                print(f'Error: Github User or Organization {error_message}\n')
-                sys.exit(1)  # exit with non-zero exit code
+                raise GitHubAPIException(
+                    f'Error: Github User or Organization {error_message}')
             elif error_message == "Bad credentials":
-                print("Error: Bad credentials\n")
-                sys.exit(1)  # exit with non-zero exit code
+                raise GitHubAPIException("Error: Bad credentials")
             elif "API rate limit exceeded" in error_message:
                 if page == 1:   # If the first request has already exceeded the rate limit, we can't continue
                     print(
@@ -187,11 +189,9 @@ def get_files_from_repository(owner, repository, branch=None):
             if multipleRepositories:
                 return None
             else:
-                print(f'Error: Repository {error_message}\n')
-                sys.exit(1)  # exit with non-zero exit code
+                raise GitHubAPIException(f'Error: Repository {error_message}')
         elif error_message == "Bad credentials":
-            print("Error: Bad credentials\n")
-            sys.exit(1)  # exit with non-zero exit code
+            raise GitHubAPIException("Error: Bad credentials")
         elif error_message == "Git Repository is empty.":
             return None
         elif "API rate limit exceeded" in error_message:
@@ -225,11 +225,10 @@ def get_default_branch_of_repository(owner, repository):
             if multipleRepositories:
                 return None
             else:
-                print(f'Error: Repository {error_message}\n')
-                sys.exit(1)  # exit with non-zero exit code
+                raise GitHubAPIException(
+                    f'Error: Repository {error_message}')
         elif error_message == "Bad credentials":
-            print("Error: Bad credentials\n")
-            sys.exit(1)  # exit with non-zero exit code
+            raise GitHubAPIException("Error: Bad credentials")
         elif "API rate limit exceeded" in error_message:
             print(
                 "API rate limit exceeded, not all repositories have been analyzed.")

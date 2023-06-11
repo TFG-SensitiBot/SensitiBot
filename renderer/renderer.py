@@ -1,10 +1,10 @@
 import datetime
-import webbrowser
+import json
 import os
 import subprocess
 import sys
 import tempfile
-import json
+import webbrowser
 
 
 def show_result_as_text(data, name, deep_search=False):

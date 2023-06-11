@@ -1,8 +1,10 @@
-from reader import columns_reader, headers_reader
-import pandas as pd
-
 # Ignore warnings
 import warnings
+
+import pandas as pd
+
+from reader import columns_reader, headers_reader
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
