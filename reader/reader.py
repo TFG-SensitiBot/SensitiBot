@@ -59,7 +59,11 @@ def process_files(files, deep_search=False, wide_search=False):
         if len(result_repository) != 1:
             result["repositories"].append(result_repository)
 
-    return result if len(result['repositories']) != 0 else None
+    if len(result['repositories']) == 0:
+        print("\nYour files are clean!")
+        return None
+
+    return result
 
 
 def read_file(file, deep_search=False, wide_search=False):

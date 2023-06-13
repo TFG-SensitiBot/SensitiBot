@@ -33,7 +33,7 @@ def show_result_as_text(data, name, deep_search=False):
         subprocess.Popen(["notepad.exe", f.name])
     elif os.name == 'posix':  # For Linux and macOS
         opener = 'open' if sys.platform == 'darwin' else 'xdg-open'
-        subprocess.call([opener, f.name])
+        subprocess.Popen([opener, f.name])
     else:
         raise OSError('Unsupported operating system')
 

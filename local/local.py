@@ -3,14 +3,12 @@ import os
 from reader import reader
 
 
-def process_local(directory=None, deep_search=False, wide_search=False):
+def process_local(directory=None):
     """
     Initiates the process of getting the files from the local repository.
 
     Args:
         directory (str): The directory to search.
-        deep_search (bool): If true, the content of the files will be analyzed.
-        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of getting the files.
@@ -21,15 +19,10 @@ def process_local(directory=None, deep_search=False, wide_search=False):
         print("\nNo dataset files found")
         return None
 
-    result = reader.process_files(files, deep_search, wide_search)
-    if result == None:
-        print("\nYour files are clean!")
-        return None
-
-    return result
+    return files
 
 
-def get_files_recursively(directory):
+def get_files_recursively(directory=None):
     """
     Gets the files from the local directory.
 

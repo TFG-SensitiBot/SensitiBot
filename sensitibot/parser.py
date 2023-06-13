@@ -4,7 +4,7 @@ from importlib.metadata import version
 from sensitibot import custom_formatters
 
 
-def parse_args(args):
+def parse_args(args=None):
     parser = custom_formatters.CustomArgumentParser(
         prog='sensitibot',
         description='SensitiBot is a tool to analyze datasets for sensitive information.',

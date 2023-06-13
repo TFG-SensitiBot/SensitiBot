@@ -13,10 +13,14 @@ multipleRepositories = False
 
 
 class GitHubAPIException(Exception):
-    pass
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return self.message
 
 
-def process_github(owner, repository=None, branch=None, token=None, deep_search=False, wide_search=False):
+def process_github(owner, repository=None, branch=None, token=None):
     """
     Initiates the process of getting the files from GitHub.
 
@@ -25,8 +29,6 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
         repository (str): The repository to search.
         branch (str): The branch to search.
         token (str): The GitHub token.
-        deep_search (bool): If true, the content of the files will be analyzed.
-        wide_search (bool): If true, all the tables or sheets will be analyzed.
 
     Returns:
         dict: The result of getting the files.
@@ -40,12 +42,11 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
         headers['Authorization'] = f'Bearer {TOKEN}'
 
     files = {}
-    result = {}
     if repository == None:
         multipleRepositories = True
         files = get_files_from_repositories(owner)
     else:
-        print(f'Searching repositoriy {owner}/{repository}:')
+        print(f'Searching repository {owner}/{repository}:')
         files = get_files_from_repository(owner, repository, branch)
         if files != None:
             files = {"repositories": [files]}
@@ -54,12 +55,7 @@ def process_github(owner, repository=None, branch=None, token=None, deep_search=
         print("\nNo dataset files found")
         return None
 
-    result = reader.process_files(files, deep_search, wide_search)
-    if result == None:
-        print("\nYour files are clean!")
-        return None
-
-    return result
+    return files
 
 
 def get_files_from_repositories(owner):
@@ -86,6 +82,7 @@ def get_files_from_repositories(owner):
     remaining = get_rate_limit()
     if remaining <= number_of_repos:
         number_of_repos = remaining
+        json_repos = json_repos[:number_of_repos]
         print(
             f'Warning: Only {number_of_repos} repositories will be analyzed, because the GitHub API rate limit has been exceeded.')
 
@@ -160,6 +157,12 @@ def get_rate_limit():
         int: The rate limit from the GitHub API.
     """
     response = requests.get(f'{api_url}/rate_limit', headers=headers)
+    if not response.ok:
+        error = response.json()
+        error_message = error.get('message')
+        if error_message == "Bad credentials":
+            raise GitHubAPIException("Error: Bad credentials")
+
     json_data = response.json()
     return json_data["rate"]["remaining"]
 
