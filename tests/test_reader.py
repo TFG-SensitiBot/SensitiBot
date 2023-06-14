@@ -5,7 +5,6 @@ from io import StringIO
 from unittest.mock import patch
 
 from reader import reader
-from sensitibot.parser import parse_args
 
 
 class TestReaderGitHub(unittest.TestCase):

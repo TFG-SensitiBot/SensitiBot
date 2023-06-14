@@ -5,7 +5,6 @@ from io import StringIO
 from unittest.mock import patch
 
 from local import local
-from sensitibot.parser import parse_args
 
 
 class TestLocal(unittest.TestCase):
@@ -40,7 +39,8 @@ class TestLocal(unittest.TestCase):
 
         # Execute the function and get the output
         result = local.process_local(test_files_dir)
-        result_file_paths = result["repositories"][0]["files"]
+        result_file_paths = [
+            path for path in result["repositories"][0]["files"] if "_clean." not in path]
 
         # The result matches the expected output
         self.assertEqual(result_file_paths, expected_file_paths)
@@ -55,7 +55,8 @@ class TestLocal(unittest.TestCase):
 
         # Execute the function and get the output
         result = local.process_local()
-        result_file_paths = result["repositories"][0]["files"]
+        result_file_paths = [
+            path for path in result["repositories"][0]["files"] if "_clean." not in path]
 
         # The result doesn't match beacuse the path is different
         self.assertNotEquals(result_file_paths, expected_file_paths)

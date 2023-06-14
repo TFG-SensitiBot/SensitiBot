@@ -1,5 +1,4 @@
 import unittest
-from argparse import ArgumentTypeError
 from importlib.metadata import version
 from io import StringIO
 from unittest.mock import patch
