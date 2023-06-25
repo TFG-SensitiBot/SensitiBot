@@ -1,7 +1,6 @@
 from tqdm import tqdm
 
-from reader import (access_reader, csv_reader, excel_reader, json_reader,
-                    tsv_reader)
+from reader import csv_reader, excel_reader, json_reader, tsv_reader
 
 
 def process_files(files, deep_search=False, wide_search=False):
@@ -89,11 +88,6 @@ def read_file(file, deep_search=False, wide_search=False):
     excel_extensions = [".xlsx", "xlsm", "xltx", "xltm"]
     if any(file.endswith(ext) for ext in excel_extensions):
         result_file, result_error = excel_reader.read_excel_file(
-            file, deep_search, wide_search)
-        return result_file, result_error
-
-    if file.endswith('.mdb') or file.endswith('.accdb'):
-        result_file, result_error = access_reader.read_access_file(
             file, deep_search, wide_search)
         return result_file, result_error
 

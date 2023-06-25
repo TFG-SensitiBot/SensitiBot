@@ -34,8 +34,6 @@ class TestCleanerNoRewrite(unittest.TestCase):
         # These are the files that should be created
         expected_files = [
             os.path.join(os.path.dirname(__file__),
-                         'test_files\\access\\access_file_1_clean.accdb'),
-            os.path.join(os.path.dirname(__file__),
                          'test_files\\csv\\csv_file_1_clean.csv'),
             os.path.join(os.path.dirname(__file__),
                          'test_files\\excel\\excel_file_1_clean.xlsx'),
@@ -94,9 +92,8 @@ class TestCleanerWithRewrite(unittest.TestCase):
             new_expected_files.append(file)
         files["repositories"][0]["files"] = new_expected_files
 
+        # These are the files that should be created
         expected_files = [
-            os.path.join(os.path.dirname(__file__),
-                         'cleaned_files\\access\\access_file_1.accdb'),
             os.path.join(os.path.dirname(__file__),
                          'cleaned_files\\csv\\csv_file_1.csv'),
             os.path.join(os.path.dirname(__file__),
@@ -110,8 +107,6 @@ class TestCleanerWithRewrite(unittest.TestCase):
         ]
 
         # Copy the files to clean so they can be rewritten
-        os.makedirs(os.path.join(os.path.dirname(__file__),
-                    "cleaned_files\\access"), exist_ok=True)
         os.makedirs(os.path.join(os.path.dirname(__file__),
                     "cleaned_files\\csv"), exist_ok=True)
         os.makedirs(os.path.join(os.path.dirname(__file__),
@@ -159,7 +154,6 @@ local_clean = '''{
     "repositories": [
         {
             "files": [
-                "test_files\\\\access\\\\access_file_1_clean.accdb",
                 "test_files\\\\csv\\\\csv_file_1_clean.csv",
                 "test_files\\\\excel\\\\excel_file_1_clean.xlsx",
                 "test_files\\\\json\\\\json_file_1_clean.json",
@@ -176,41 +170,6 @@ local_original = '''{
     "repositories": [
         {
             "files": [
-                {
-                    "name": "test_files\\\\access\\\\access_file_1.accdb",
-                    "positive_tables": [
-                        {
-                            "name": "Table1",
-                            "positive_headers": [
-                                "firstname",
-                                "surname",
-                                "phone_number",
-                                "dni",
-                                "password"
-                            ]
-                        },
-                        {
-                            "name": "Table2",
-                            "positive_headers": [
-                                "name",
-                                "email",
-                                "phone",
-                                "dni",
-                                "passwords"
-                            ]
-                        },
-                        {
-                            "name": "Table3",
-                            "positive_headers": [
-                                "name",
-                                "email",
-                                "phone",
-                                "iban",
-                                "ip"
-                            ]
-                        }
-                    ]
-                },
                 {
                     "name": "test_files\\\\csv\\\\csv_file_1.csv",
                     "positive_headers": [
@@ -296,41 +255,6 @@ local_copied = '''{
     "repositories": [
         {
             "files": [
-                {
-                    "name": "cleaned_files\\\\access\\\\access_file_1.accdb",
-                    "positive_tables": [
-                        {
-                            "name": "Table1",
-                            "positive_headers": [
-                                "firstname",
-                                "surname",
-                                "phone_number",
-                                "dni",
-                                "password"
-                            ]
-                        },
-                        {
-                            "name": "Table2",
-                            "positive_headers": [
-                                "name",
-                                "email",
-                                "phone",
-                                "dni",
-                                "passwords"
-                            ]
-                        },
-                        {
-                            "name": "Table3",
-                            "positive_headers": [
-                                "name",
-                                "email",
-                                "phone",
-                                "iban",
-                                "ip"
-                            ]
-                        }
-                    ]
-                },
                 {
                     "name": "cleaned_files\\\\csv\\\\csv_file_1.csv",
                     "positive_headers": [

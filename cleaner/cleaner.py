@@ -1,5 +1,5 @@
-from cleaner import (access_cleaner, csv_cleaner, excel_cleaner, json_cleaner,
-                     show_matches, tsv_cleaner)
+from cleaner import (csv_cleaner, excel_cleaner, json_cleaner, show_matches,
+                     tsv_cleaner)
 
 
 def process_cleaner(files):
@@ -66,9 +66,6 @@ def clean_file(file):
         excel_extensions = [".xlsx", ".xlsm", ".xltx", ".xltm"]
         if any(file["name"].endswith(ext) for ext in excel_extensions):
             excel_cleaner.clean_excel_file(file, replace)
-
-        if file["name"].endswith('.mdb') or file["name"].endswith('.accdb'):
-            access_cleaner.clean_access_file(file, replace)
 
         if file["name"].endswith('.json') or file["name"].endswith('.jsonl'):
             json_cleaner.clean_json_file(file, replace)

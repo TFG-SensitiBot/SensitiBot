@@ -129,9 +129,6 @@ github_user = '''{
     "repositories": [
         {
             "files": [
-                "https://raw.githubusercontent.com/codicero/test-data/master/access/access_file_1.accdb",
-                "https://raw.githubusercontent.com/codicero/test-data/master/access/access_file_2.accdb",
-                "https://raw.githubusercontent.com/codicero/test-data/master/access/access_file_3.accdb",
                 "https://raw.githubusercontent.com/codicero/test-data/master/csv/csv_file_1.csv",
                 "https://raw.githubusercontent.com/codicero/test-data/master/csv/csv_file_2.csv",
                 "https://raw.githubusercontent.com/codicero/test-data/master/csv/csv_file_3.csv",

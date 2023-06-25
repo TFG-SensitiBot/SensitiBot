@@ -56,6 +56,42 @@ class TestParser(unittest.TestCase):
             expected_output = f"sensitibot {version('SensitiBot')}"
             self.assertEqual(version_output, expected_output)
 
+    def test_wrong_sucommand(self):
+        # Prepare test input
+        args = ['subcommand']
+
+        # Redirect stderr to capture the error message
+        with patch('sys.stderr', new=StringIO()) as stderr:
+            # Execute the function and assert the output
+            with self.assertRaises(SystemExit) as cm:
+                parse_args(args)
+
+            # Check the error message
+            error_output = stderr.getvalue().strip()
+            expected_output = wrong_subcommand_dialog
+            self.assertEqual(error_output, expected_output)
+
+            # Check the exit code
+            self.assertEqual(cm.exception.code, 2)
+
+    def test_wrong_argument(self):
+        # Prepare test input
+        args = ['--argument']
+
+        # Redirect stderr to capture the error message
+        with patch('sys.stderr', new=StringIO()) as stderr:
+            # Execute the function and assert the output
+            with self.assertRaises(SystemExit) as cm:
+                parse_args(args)
+
+            # Check the error message
+            error_output = stderr.getvalue().strip()
+            expected_output = wrong_argument_dialog
+            self.assertEqual(error_output, expected_output)
+
+            # Check the exit code
+            self.assertEqual(cm.exception.code, 2)
+
 
 class TestGitHubParser(unittest.TestCase):
     def test_github_subcommand_help_argument(self):
@@ -330,6 +366,24 @@ class TestLocalParser(unittest.TestCase):
             output = stdout.getvalue().strip()
             self.assertEqual(output, '')  # No output expected for this case
 
+    def test_wrong_argument(self):
+        # Prepare test input
+        args = ['local', '--argument']
+
+        # Redirect stderr to capture the error message
+        with patch('sys.stderr', new=StringIO()) as stderr:
+            # Execute the function and assert the output
+            with self.assertRaises(SystemExit) as cm:
+                parse_args(args)
+
+            # Check the error message
+            error_output = stderr.getvalue().strip()
+            expected_output = wrong_argument_dialog
+            self.assertEqual(error_output, expected_output)
+
+            # Check the exit code
+            self.assertEqual(cm.exception.code, 2)
+
 
 if __name__ == '__main__':
     unittest.main()
@@ -347,6 +401,14 @@ positional arguments:
 optional arguments:
   -h, --help      show this help message and exit
   -v, --version   show program's version number and exit"""
+
+wrong_subcommand_dialog = """usage: sensitibot [-h] [-v] {github,local} ...
+
+sensitibot: error: argument command: invalid choice: 'subcommand' (choose from 'github', 'local')"""
+
+wrong_argument_dialog = """usage: sensitibot [-h] [-v] {github,local} ...
+
+sensitibot: error: unrecognized arguments: --argument"""
 
 
 # Expected output for the help dialog of the GitHub subparser

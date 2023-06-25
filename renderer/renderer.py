@@ -4,7 +4,6 @@ import os
 import subprocess
 import sys
 import tempfile
-import webbrowser
 
 
 def show_result_as_text(data, name, deep_search=False):

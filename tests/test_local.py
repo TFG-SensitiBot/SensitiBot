@@ -70,9 +70,6 @@ expected_output = '''{
     "repositories": [
         {
             "files": [
-                "test_files\\\\access\\\\access_file_1.accdb",
-                "test_files\\\\access\\\\access_file_2.accdb",
-                "test_files\\\\access\\\\access_file_3.accdb",
                 "test_files\\\\clean\\\\clean.csv",
                 "test_files\\\\csv\\\\csv_file_1.csv",
                 "test_files\\\\csv\\\\csv_file_2.csv",

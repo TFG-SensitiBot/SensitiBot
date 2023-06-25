@@ -1,7 +1,5 @@
 import os
 
-from reader import reader
-
 
 def process_local(directory=None):
     """
@@ -38,7 +36,7 @@ def get_files_recursively(directory=None):
     result = {"repositories": [{"name": "local", "files": []}]}
 
     extensions = [".csv", ".tsv", ".xlsx", "xlsm", "xltx",
-                  "xltm", ".mdb", ".accdb", ".json", ".jsonl"]
+                  "xltm", ".json", ".jsonl"]
 
     print(f'Searching directory {directory}:')
 

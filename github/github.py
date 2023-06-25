@@ -4,8 +4,6 @@ import urllib
 import requests
 from tqdm import tqdm
 
-from reader import reader
-
 api_url = 'https://api.github.com'
 raw_url = 'https://raw.githubusercontent.com'
 headers = {}
@@ -256,7 +254,7 @@ def file_selector(json_files, owner, repository):
     result_repository = {"name": repository, "files": []}
 
     extensions = [".csv", ".tsv", ".xlsx", "xlsm", "xltx",
-                  "xltm", ".mdb", ".accdb", ".json", ".jsonl"]
+                  "xltm", ".json", ".jsonl"]
 
     for file in json_files["tree"]:
         if (file["type"] == "blob"):
