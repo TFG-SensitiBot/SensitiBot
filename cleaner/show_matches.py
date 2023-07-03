@@ -1,4 +1,4 @@
-def get_matches_csv_tsv(file):
+def get_matches(file):
     matches = ""
 
     if "positive_headers" in file:
@@ -27,6 +27,7 @@ def get_matches_excel(file):
                 for positive_column, positive_fields in positive_sheet['positive_columns'].items():
                     matches = f"{matches}\t\tColumn: {positive_column}:\tDetected fields: {positive_fields}\n"
     return matches
+
 
 def get_matches_access(file):
     matches = ""

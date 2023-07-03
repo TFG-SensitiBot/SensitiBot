@@ -1,0 +1,242 @@
+[
+    {
+        "id": "1",
+        "name": "Alejandro Garc\u00eda",
+        "email": "alejandro.garcia@example.com",
+        "phone": "+34666111222",
+        "dni": "12345678A",
+        "passwords": "Segura#123"
+    },
+    {
+        "id": "2",
+        "name": "Carmen Rodr\u00edguez",
+        "email": "carmen.rodriguez@example.com",
+        "phone": "+34645333444",
+        "dni": "87654321B",
+        "passwords": "CocheRojo_33"
+    },
+    {
+        "id": "3",
+        "name": "David Fern\u00e1ndez",
+        "email": "david.fernandez@example.com",
+        "phone": "+34679777888",
+        "dni": "13579024C",
+        "passwords": "Contrase\u00f1a*Fuerte"
+    },
+    {
+        "id": "4",
+        "name": "Elena P\u00e9rez",
+        "email": "elena.perez@example.com",
+        "phone": "+34666999888",
+        "dni": "36912457D",
+        "passwords": "P3lican0_2023"
+    },
+    {
+        "id": "5",
+        "name": "Fernando Ruiz",
+        "email": "fernando.ruiz@example.com",
+        "phone": "+34639666555",
+        "dni": "48573912E",
+        "passwords": "P@ssword_S3gura"
+    },
+    {
+        "id": "6",
+        "name": "Ana L\u00f3pez",
+        "email": "ana.lopez@example.com",
+        "phone": "+34665432123",
+        "dni": "24681012F",
+        "passwords": "Perro#Verde2"
+    },
+    {
+        "id": "7",
+        "name": "Luc\u00eda Jim\u00e9nez",
+        "email": "lucia.jimenez@example.com",
+        "phone": "+34656555777",
+        "dni": "36912121G",
+        "passwords": "Cl@veS3gura!"
+    },
+    {
+        "id": "8",
+        "name": "Miguel G\u00f3mez",
+        "email": "miguel.gomez@example.com",
+        "phone": "+34687777999",
+        "dni": "65432109H",
+        "passwords": "G0Ld3nK3y"
+    },
+    {
+        "id": "9",
+        "name": "Natalia Rodr\u00edguez",
+        "email": "natalia.rodriguez@example.com",
+        "phone": "+34655444111",
+        "dni": "14725836I",
+        "passwords": "MyP@ssword99"
+    },
+    {
+        "id": "10",
+        "name": "\u00d3scar S\u00e1nchez",
+        "email": "oscar.sanchez@example.com",
+        "phone": "+34677889900",
+        "dni": "96385274J",
+        "passwords": "S\u00faperContrase\u00f1a"
+    },
+    {
+        "id": "11",
+        "name": "Patricia Garc\u00eda",
+        "email": "patricia.garcia@example.com",
+        "phone": "+34677888666",
+        "dni": "52147896K",
+        "passwords": "Galletas_123"
+    },
+    {
+        "id": "12",
+        "name": "Roberto P\u00e9rez",
+        "email": "roberto.perez@example.com",
+        "phone": "+34655777666",
+        "dni": "98765432L",
+        "passwords": "AbCd1234%"
+    },
+    {
+        "id": "13",
+        "name": "Sara Gonz\u00e1lez",
+        "email": "sara.gonzalez@example.com",
+        "phone": "+34666333222",
+        "dni": "45678912M",
+        "passwords": "Contrase\u00f1a.1"
+    },
+    {
+        "id": "14",
+        "name": "Silvia Ruiz",
+        "email": "silvia.ruiz@example.com",
+        "phone": "+34699111222",
+        "dni": "12312312N",
+        "passwords": "MiContras3\u00f1@!"
+    },
+    {
+        "id": "15",
+        "name": "Alberto Mart\u00ednez",
+        "email": "alberto.martinez@example.com",
+        "phone": "+34666777888",
+        "dni": "78901234O",
+        "passwords": "Passw0rd"
+    },
+    {
+        "id": "16",
+        "name": "Beatriz Gonz\u00e1lez",
+        "email": "beatriz.gonzalez@example.com",
+        "phone": "+34655667788",
+        "dni": "56789012P",
+        "passwords": "MyP@ssword99"
+    },
+    {
+        "id": "17",
+        "name": "Carlos Rodr\u00edguez",
+        "email": "carlos.rodriguez@example.com",
+        "phone": "+34666777888",
+        "dni": "34567890Q",
+        "passwords": "C0ntras3\u00f1a"
+    },
+    {
+        "id": "18",
+        "name": "Diana Garc\u00eda",
+        "email": "diana.garcia@example.com",
+        "phone": "+34655123456",
+        "dni": "12345678R",
+        "passwords": "Passw0rd!"
+    },
+    {
+        "id": "19",
+        "name": "Esther Fern\u00e1ndez",
+        "email": "esther.fernandez@example.com",
+        "phone": "+34666555444",
+        "dni": "23456789S",
+        "passwords": "Contrase\u00f1a#123"
+    },
+    {
+        "id": "20",
+        "name": "Francisco Garc\u00eda",
+        "email": "francisco.garcia@example.com",
+        "phone": "+34666777888",
+        "dni": "34567890T",
+        "passwords": "Passw0rd@"
+    },
+    {
+        "id": "21",
+        "name": "Gabriela S\u00e1nchez",
+        "email": "gabriela.sanchez@example.com",
+        "phone": "+34699775533",
+        "dni": "45678901U",
+        "passwords": "Contrase\u00f1a123"
+    },
+    {
+        "id": "22",
+        "name": "H\u00e9ctor Mart\u00ednez",
+        "email": "hector.martinez@example.com",
+        "phone": "+34666777888",
+        "dni": "56789012V",
+        "passwords": "MyP@ssword99"
+    },
+    {
+        "id": "23",
+        "name": "Luciano S\u00e1nchez",
+        "email": "luciano.sanchez@example.com",
+        "phone": "+34666777888",
+        "dni": "34567890U",
+        "passwords": "MyP@ssword"
+    },
+    {
+        "id": "24",
+        "name": "Jaime Mart\u00edn",
+        "email": "jaime.martin@example.com",
+        "phone": "+34699888777",
+        "dni": "12345678W",
+        "passwords": "MiContras3\u00f1a!"
+    },
+    {
+        "id": "25",
+        "name": "Laura Jim\u00e9nez",
+        "email": "laura.jimenez@example.com",
+        "phone": "+34666777888",
+        "dni": "23456789X",
+        "passwords": "Passw0rd123"
+    },
+    {
+        "id": "26",
+        "name": "Manuel Garc\u00eda",
+        "email": "manuel.garcia@example.com",
+        "phone": "+34666777888",
+        "dni": "34567890Y",
+        "passwords": "Contrase\u00f1a#1"
+    },
+    {
+        "id": "27",
+        "name": "Nerea S\u00e1nchez",
+        "email": "nerea.sanchez@example.com",
+        "phone": "+34666777888",
+        "dni": "45678901Z",
+        "passwords": "MyP@ssword99"
+    },
+    {
+        "id": "28",
+        "name": "\u00d3scar Garc\u00eda",
+        "email": "oscar.garcia@example.com",
+        "phone": "+34699009900",
+        "dni": "36912121A",
+        "passwords": "Cl@v3Segura"
+    },
+    {
+        "id": "29",
+        "name": "Pablo Rodr\u00edguez",
+        "email": "pablo.rodriguez@example.com",
+        "phone": "+34666777888",
+        "dni": "65432109B",
+        "passwords": "G0Ld3nK3y!"
+    },
+    {
+        "id": "30",
+        "name": "Rebeca S\u00e1nchez",
+        "email": "rebeca.sanchez@example.com",
+        "phone": "+34666777888",
+        "dni": "78901234C",
+        "passwords": "MiP@ssword"
+    }
+]

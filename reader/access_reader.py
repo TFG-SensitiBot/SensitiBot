@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+
 import pandas as pd
 import requests
 import sqlalchemy as sa
@@ -30,7 +31,8 @@ def read_access_file(file, deep_search=False, wide_search=False):
             r"DBQ={};".format(new_file) +
             r"ExtendedAnsiSQL=1;"
         )
-        connection_url = sa.engine.URL.create("access+pyodbc", query={"odbc_connect": connection_string})
+        connection_url = sa.engine.URL.create(
+            "access+pyodbc", query={"odbc_connect": connection_string})
         engine = sa.create_engine(connection_url)
     except Exception as e:
         error = {"file": file, "error": str(e)}
@@ -43,13 +45,13 @@ def read_access_file(file, deep_search=False, wide_search=False):
     except Exception as e:
         error = {"file": file, "error": str(e)}
         return None, error
-    
+
     tables_to_read = table_names
     if not wide_search and len(table_names) > 1:
         read_all_sheets = ask_read_all_tables(len(table_names))
         if not read_all_sheets:
             tables_to_read = ask_which_tables(table_names)
-    
+
     result_file = {"name": file}
 
     result_tables = []
@@ -125,6 +127,7 @@ def ask_which_tables(table_names):
             tables_to_read.append(table_name)
 
     return tables_to_read
+
 
 def download_file(file):
     # Create a temporary file to save the downloaded Access file

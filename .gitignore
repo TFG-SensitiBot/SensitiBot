@@ -3,3 +3,6 @@ SensitiBot.egg-info
 __pycache__
 build
 outputs
+dist
+*_clean.*
+cleaned_files

@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from reader import access_reader, csv_reader, excel_reader, tsv_reader
+from reader import csv_reader, excel_reader, json_reader, tsv_reader
 
 
 def process_files(files, deep_search=False, wide_search=False):
@@ -16,10 +16,22 @@ def process_files(files, deep_search=False, wide_search=False):
         dict: The result of analyzing the files.
     """
     repositories = files["repositories"]
+    number_of_repositories = len(repositories)
+
+    if number_of_repositories > 1:
+        print(f"\t{number_of_repositories} repositories found to have dataset files")
+
     result = {"repositories": []}
 
-    for repository in repositories:
-        print(f"\nAnalyzing repository {repository['name']}:")
+    for index in range(number_of_repositories):
+        repository = repositories[index]
+
+        if number_of_repositories > 1:
+            print(
+                f"\nAnalyzing repository ({index+1}/{number_of_repositories}) {repository['name']}:")
+        else:
+            print(f"\nAnalyzing repository {repository['name']}:")
+
         result_repository = {"name": repository["name"]}
 
         result_files = []
@@ -30,7 +42,8 @@ def process_files(files, deep_search=False, wide_search=False):
         for file in pbar:
             pbar.set_description(file[-50:])
 
-            result_file, result_error = read_file(file, deep_search, wide_search)
+            result_file, result_error = read_file(
+                file, deep_search, wide_search)
             if result_file != None:
                 result_files.append(result_file)
             if result_error != None:
@@ -45,7 +58,11 @@ def process_files(files, deep_search=False, wide_search=False):
         if len(result_repository) != 1:
             result["repositories"].append(result_repository)
 
-    return result if len(result['repositories']) != 0 else None
+    if len(result['repositories']) == 0:
+        print("\nYour files are clean!")
+        return None
+
+    return result
 
 
 def read_file(file, deep_search=False, wide_search=False):
@@ -68,14 +85,15 @@ def read_file(file, deep_search=False, wide_search=False):
         result_file, result_error = tsv_reader.read_tsv_file(file, deep_search)
         return result_file, result_error
 
-    if file.endswith('.xls') or file.endswith('.xlsx'):
+    excel_extensions = [".xlsx", "xlsm", "xltx", "xltm"]
+    if any(file.endswith(ext) for ext in excel_extensions):
         result_file, result_error = excel_reader.read_excel_file(
             file, deep_search, wide_search)
         return result_file, result_error
 
-    if file.endswith('.mdb') or file.endswith('.accdb'):
-        result_file, result_error = access_reader.read_access_file(
-            file, deep_search, wide_search)
+    if file.endswith('.json') or file.endswith('.jsonl'):
+        result_file, result_error = json_reader.read_json_file(
+            file, deep_search)
         return result_file, result_error
 
     return None, None
