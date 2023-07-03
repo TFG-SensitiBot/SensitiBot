@@ -25,8 +25,7 @@ def clean_excel_file(file, replace_file=False):
 
     base_filename, extension = os.path.splitext(filename)
 
-    if not replace_file:
-        base_filename = base_filename + "_clean"
+    base_filename = base_filename + "_clean"
 
     new_filename = base_filename + extension
 
@@ -52,3 +51,8 @@ def clean_excel_file(file, replace_file=False):
         sheet_data.to_excel(writer, sheet_name=sheet_name, index=False)
 
     writer.close()
+    data.close()
+
+    if replace_file:
+        os.remove(filename)
+        os.rename(new_filename, filename)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "SensitiBot"
-version = "1.1.0"
+version = "1.1.1"
 description = "A Python bot to detect data leaks on public repositories"
 readme = "README.md"
 authors = ["José Manuel Martín Luque <josemanuelmartinluque@outlook.com>"]

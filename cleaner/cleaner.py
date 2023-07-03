@@ -3,6 +3,9 @@ from cleaner import (csv_cleaner, excel_cleaner, json_cleaner, show_matches,
 
 
 def process_cleaner(files):
+    if "files" not in files["repositories"][0]:
+        print("\nNo files to clean.")
+        return
     generate_clean_files = input(
         "\nDo you want to generate clean files? (yes/no): ")
     while generate_clean_files.lower() not in ("yes", "no"):
